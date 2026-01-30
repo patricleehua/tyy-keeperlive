@@ -1,0 +1,10 @@
+[project]
+name = "tyy-keeperlive"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ddddocr==1.5.6",
+    "selenium>=4.40.0",
+]

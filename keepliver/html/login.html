@@ -1,0 +1,1057 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="天翼量子AI云电脑是云计算技术和终端相结合的创新型产品。依托中国电信优质云网资源，结合自主研发的CLINK数据安全传输协议，具备多重数据安全防护机制，实现安全高效的量子AI云电脑使用体验。即开即用，便捷访问，适配多种终端类型。"
+    />
+    <meta
+      name="keywords"
+      content="云电脑,天翼云,天翼云电脑,云电脑web,AI云电脑,天翼AI云电脑,天翼量子AI云电脑,AI云电脑web"
+    />
+    <link rel="manifest" href="./manifest.json" />
+    <script>
+      const isMiniProgram = navigator.userAgent
+        .toLowerCase()
+        .includes("miniprogram");
+      let title = "天翼量子AI云电脑";
+      if (isMiniProgram) {
+        title = title.replace("量子", "");
+      }
+      document.title = title;
+    </script>
+    <title>天翼量子AI云电脑</title>
+    <link rel="icon" type="image/x-icon" href="./static/common/favicon4.ico" />
+    <script src="static/common/Device.min.js"></script>
+    <div style="height: 10vh; width: 10vw; border: 0px; padding: 0px"></div>
+    <script src="static/common/jweixin-1.3.2.js"></script>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      #browser-tips {
+        position: fixed;
+        display: none;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        display: none;
+        text-align: center;
+        background: #fff;
+        overflow: auto;
+      }
+      #browser-tips .tips-img {
+        margin-top: 10%;
+      }
+      #browser-tips .tips-body {
+        font-size: 18px;
+        line-height: 1.5;
+        max-width: 360px;
+        margin: 15px auto;
+        text-align: center;
+      }
+
+      #browser-tips .tips-body a {
+        text-decoration: none;
+        color: #409eff;
+      }
+      #browser-tips .tips-fn {
+        margin-top: 40px;
+      }
+      #browser-tips .link-chrome,
+      #browser-tips .link-client {
+        background: #ffffff;
+        border: 1px solid #287bff;
+        border-radius: 4px;
+        color: #287bff;
+        font-size: 18px;
+        padding: 10px 20px;
+        text-decoration: none;
+        margin: 0 10px;
+      }
+      #browser-tips .link-client {
+        background: #287bff;
+        color: #fff;
+      }
+      #browser-tips .link-close {
+        background: #ffffff;
+        border: 1px solid #287bff;
+        border-radius: 4px;
+        color: #287bff;
+        font-size: 18px;
+        padding: 10px 20px;
+        text-decoration: none;
+        margin: 0 auto;
+      }
+
+      #region-public-tips {
+        display: none;
+      }
+      #region-guangyan-tips {
+        display: none;
+      }
+
+      #pc-tips {
+        display: none;
+      }
+      #mobile-tips {
+        display: none;
+      }
+      #browser-tips-close-btn {
+        display: none;
+      }
+      #normal {
+        display: block;
+      }
+    </style>
+    <script
+      defer="defer"
+      src="https://deskcdn.ctyun.cn/pccdnstatic/js/main.9d6148.js"
+    ></script>
+    <link
+      href="https://deskcdn.ctyun.cn/pccdnstatic/css/main.b7d0f9363ccf4d458b85.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://deskcdn.ctyun.cn/pccdnstatic/css/4667.7896b6f19a7c9553058f.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://deskcdn.ctyun.cn/pccdnstatic/css/5643.38541750dc375928f4f5.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://deskcdn.ctyun.cn/pccdnstatic/css/7247.f8e0b208417428eaec12.css"
+    />
+  </head>
+  <body data-equipment="pc">
+    <div id="app" data-v-app="">
+      <!---->
+      <div
+        data-v-49bab57b=""
+        class="login-page"
+        style="
+          background-image: url(&quot;https://deskcdn.ctyun.cn/pccdnstatic/imgs/bg-1.508f32ae637dee1e7381.jpg&quot;);
+        "
+      >
+        <div data-v-6061119a="" data-v-49bab57b="" class="box">
+          <div data-v-6061119a="" class="box-logo">
+            <div data-v-11851c53="" data-v-6061119a="" class="logo-wrap">
+              <img
+                data-v-11851c53=""
+                class="logo-5g"
+                src="https://deskcdn.ctyun.cn/pccdnstatic/imgs/logo-of-select-desktop-public.d5d64b7c921b285152b3.svg"
+              /><!---->
+            </div>
+          </div>
+          <div data-v-6061119a="" class="box-btn">
+            <button
+              data-v-6061119a=""
+              class="el-button box-btn-item el-tooltip__trigger el-tooltip__trigger"
+              aria-disabled="false"
+              type="button"
+            >
+              <!--v-if--><span class=""
+                ><i data-v-6061119a="" class="el-icon" style="font-size: 20px"
+                  ><svg
+                    data-v-6061119a=""
+                    viewBox="0 0 1024 1024"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64h352z"
+                    ></path></svg></i
+              ></span></button
+            ><!----><!----><button
+              data-v-6061119a=""
+              class="el-button box-btn-item box-btn-item_purchase el-tooltip__trigger el-tooltip__trigger"
+              aria-disabled="false"
+              type="button"
+            >
+              <!--v-if--><span class=""
+                ><i
+                  data-v-6061119a=""
+                  class="iconfont icon-dinggou"
+                  style="font-size: 20px"
+                ></i
+              ></span></button
+            ><button
+              data-v-6061119a=""
+              class="el-button box-btn-item el-tooltip__trigger el-tooltip__trigger"
+              aria-disabled="false"
+              type="button"
+            >
+              <!--v-if--><span class=""
+                ><i
+                  data-v-6061119a=""
+                  class="iconfont icon-huanfu"
+                  style="font-size: 20px"
+                ></i
+              ></span></button
+            ><button
+              data-v-6061119a=""
+              class="el-button box-btn-item el-tooltip__trigger el-tooltip__trigger"
+              aria-disabled="false"
+              type="button"
+            >
+              <!--v-if--><span class=""
+                ><i
+                  data-v-6061119a=""
+                  class="iconfont icon-download-box-outline"
+                  style="font-size: 20px"
+                ></i
+              ></span>
+            </button>
+            <div data-v-6061119a="" class="el-dropdown" title="更多设置">
+              <button
+                data-v-6061119a=""
+                class="el-button box-btn-item el-tooltip__trigger el-tooltip__trigger"
+                aria-disabled="false"
+                type="button"
+                id="el-id-805-3"
+                role="button"
+                tabindex="0"
+                aria-controls="el-id-805-4"
+                aria-expanded="false"
+                aria-haspopup="menu"
+              >
+                <!--v-if--><span class=""
+                  ><i
+                    data-v-6061119a=""
+                    class="iconfont icon-menu-v2"
+                    style="font-size: 20px"
+                  ></i
+                  ><!----></span
+                ></button
+              ><!--v-if-->
+            </div>
+            <!---->
+            <div
+              data-v-6061119a=""
+              class="el-divider el-divider--vertical"
+              role="separator"
+              style="
+                --el-border-style: solid;
+                margin: 0px 0px 0px 16px;
+                height: 2em;
+              "
+            >
+              <!--v-if-->
+            </div>
+            <button
+              data-v-6061119a=""
+              class="el-button box-btn-item el-tooltip__trigger el-tooltip__trigger"
+              aria-disabled="false"
+              type="button"
+            >
+              <!--v-if--><span class=""
+                ><i
+                  data-v-6061119a=""
+                  class="iconfont icon-quanping"
+                  style="font-size: 20px"
+                ></i
+              ></span>
+            </button>
+          </div>
+          <div
+            data-v-6061119a=""
+            class="mobile-menu el-tooltip__trigger el-tooltip__trigger"
+          >
+            <i data-v-6061119a="" class="iconfont icon-gengduo1"></i>
+          </div>
+          <div
+            data-v-6061119a=""
+            class="mobile-menu"
+            style="position: absolute; right: 40px"
+          >
+            <i
+              data-v-6061119a=""
+              class="iconfont icon-download-box-outline"
+            ></i>
+          </div>
+        </div>
+        <div data-v-49bab57b="" class="main-container">
+          <div data-v-49bab57b="" class="clock">
+            <p data-v-49bab57b="" class="time">11:20</p>
+            <p data-v-49bab57b="" class="date">1 月 30 日 星期五</p>
+          </div>
+          <main data-v-49bab57b="" class="body">
+            <div class="left banner" data-v-49bab57b="">
+              <h1 class="title" data-v-49bab57b="">
+                <img
+                  class="logo"
+                  src="https://deskcdn.ctyun.cn/pccdnstatic/imgs/logo-new.7b4a86644b731551e440.png"
+                  data-v-49bab57b=""
+                /><img
+                  class="product-name"
+                  src="https://deskcdn.ctyun.cn/pccdnstatic/imgs/logo-mobile.f9881826179a1425511a.svg"
+                  alt="天翼量子AI云电脑"
+                  data-v-49bab57b=""
+                />
+                <div class="product-desc" data-v-49bab57b="">
+                  安全可信·智慧办公
+                </div>
+              </h1>
+            </div>
+            <div
+              data-v-49bab57b=""
+              class="qr-code show"
+              style="
+                background-image: url(&quot;https://deskcdn.ctyun.cn/pccdnstatic/imgs/banner-1.e47a46bde0de1c15ebd7.png&quot;);
+              "
+            >
+              <div data-v-f838eeb6="" data-v-49bab57b="" class="container">
+                <i data-v-f838eeb6="" class="iconfont icon-scan-code-login"></i>
+                <div data-v-f838eeb6="" class="qr-wrap">
+                  <div data-v-f838eeb6="" class="justify-center">
+                    <div data-v-f838eeb6="" class="text-wrap">
+                      <div data-v-f838eeb6="" class="e-title e-title-hide">
+                        扫码登录
+                      </div>
+                      <div data-v-f838eeb6="" class="e-title-dec">
+                        请使用
+                        <div data-v-f838eeb6="" class="el-tooltip__trigger">
+                          <span data-v-f838eeb6="" class="link"
+                            >天翼量子AI云电脑APP</span
+                          >
+                        </div>
+                        <span data-v-f838eeb6="">或</span>
+                        <div data-v-f838eeb6="" class="el-tooltip__trigger">
+                          <span data-v-f838eeb6="" class="link">翼连</span>
+                        </div>
+                        扫码登录
+                        <div data-v-f838eeb6="" class="wechat-login">
+                          支持微信扫码登录
+                        </div>
+                      </div>
+                      <div data-v-f838eeb6="" class="e-title-dec-new">
+                        请使用天翼云电脑APP/翼连/微信扫码
+                      </div>
+                    </div>
+                  </div>
+                  <div data-v-f838eeb6="" class="justify-center">
+                    <div
+                      data-v-f838eeb6=""
+                      class="cn-code el-loading-parent--relative"
+                      loading-number="1"
+                      style="display: none"
+                    >
+                      <img
+                        data-v-f838eeb6=""
+                        src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                        class="cnQrcode"
+                        alt=""
+                        style="opacity: 1"
+                      />
+                      <div
+                        data-v-f838eeb6=""
+                        class="qr-expire"
+                        style="display: none"
+                      >
+                        <p data-v-f838eeb6="" class="qr-expire__text">
+                          二维码已过期
+                        </p>
+                        <button
+                          data-v-f838eeb6=""
+                          class="el-button qr-btn"
+                          aria-disabled="false"
+                          type="button"
+                        >
+                          <!--v-if--><span class="">请点击刷新</span>
+                        </button>
+                      </div>
+                      <!---->
+                      <div class="el-loading-mask" style="">
+                        <div class="el-loading-spinner">
+                          <svg class="circular" viewBox="25 25 50 50">
+                            <circle
+                              class="path"
+                              cx="50"
+                              cy="50"
+                              r="20"
+                              fill="none"
+                            ></circle></svg
+                          ><!---->
+                        </div>
+                      </div>
+                    </div>
+                    <div data-v-f838eeb6="" class="self-code" style="">
+                      <div
+                        data-v-f838eeb6=""
+                        class="self-qr"
+                        style="opacity: 1"
+                        title="https://desk.ctyun.cn:443/selforder/#/login-confirm?qrCodeId=3jpwca4IltqozmO5O273t8vts6ys72wv50vx74zvwvz5v0y77O7zqe&amp;loginMode=1"
+                      >
+                        <canvas
+                          width="156"
+                          height="156"
+                          style="display: none"
+                        ></canvas
+                        ><img
+                          alt=""
+                          src="data:image/png;base64,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"
+                          style="display: block"
+                        />
+                      </div>
+                      <img
+                        data-v-f838eeb6=""
+                        src="https://deskcdn.ctyun.cn/pccdnstatic/imgs/qr-ai-logo.51d42fe468ef4996db5b.png"
+                        class="qr-logo"
+                        style=""
+                      />
+                      <div
+                        data-v-f838eeb6=""
+                        class="qr-expire"
+                        style="display: none"
+                      >
+                        <p data-v-f838eeb6="" class="qr-expire__text">
+                          二维码已过期
+                        </p>
+                        <button
+                          data-v-f838eeb6=""
+                          class="el-button qr-btn"
+                          aria-disabled="false"
+                          type="button"
+                        >
+                          <!--v-if--><span class="">请点击刷新</span>
+                        </button>
+                      </div>
+                      <!---->
+                    </div>
+                  </div>
+                </div>
+                <div data-v-f838eeb6="" class="qr-scaned" style="display: none">
+                  <i
+                    data-v-f838eeb6=""
+                    class="iconfont icon-tishi-chenggong"
+                  ></i>
+                  <div data-v-f838eeb6="" class="qr-tips">
+                    请按手机端提示操作
+                  </div>
+                  <button
+                    data-v-f838eeb6=""
+                    class="el-button qr-btn"
+                    aria-disabled="false"
+                    type="button"
+                  >
+                    <!--v-if--><span class="">返回扫码登录</span>
+                  </button>
+                </div>
+                <!---->
+              </div>
+              <div data-v-49bab57b="" class="ad-banner">
+                <img
+                  data-v-49bab57b=""
+                  src="https://deskcdn.ctyun.cn/pccdnstatic/imgs/login-moltbot.700a9518b656d1534240.png"
+                  alt=""
+                /><i
+                  data-v-49bab57b=""
+                  class="iconfont icon-close-circle-outline ad-banner-close"
+                ></i>
+              </div>
+            </div>
+            <div data-v-49bab57b="" class="right hide">
+              <div data-v-49bab57b="" class="right-body">
+                <div data-v-1c8aa56b="" class="title">账号登录</div>
+                <div data-v-1c8aa56b="" class="form">
+                  <div data-v-1c8aa56b="" class="form-item right-body__input">
+                    <input
+                      data-v-1c8aa56b=""
+                      class="account"
+                      type="text"
+                      placeholder="请输入手机号/邮箱/账号"
+                    />
+                  </div>
+                  <div data-v-1c8aa56b="" class="form-item right-body__input">
+                    <input
+                      data-v-1c8aa56b=""
+                      class="password"
+                      type="password"
+                      placeholder="请输入密码"
+                    /><!----><i
+                      data-v-1c8aa56b=""
+                      class="iconfont icon-password-type icon-bukejian"
+                    ></i>
+                  </div>
+                  <!---->
+                  <div data-v-1c8aa56b="" class="psd-wrapper">
+                    <span data-v-1c8aa56b="" class="forget-pwd">验证码登录</span
+                    ><span data-v-1c8aa56b="" class="forget-pwd">忘记密码</span>
+                  </div>
+                  <div data-v-1c8aa56b="" class="term term-mobile">
+                    <label data-v-1c8aa56b="" class="el-checkbox term-checkbox"
+                      ><span class="el-checkbox__input"
+                        ><input
+                          class="el-checkbox__original"
+                          type="checkbox"
+                          aria-hidden="false"
+                          value="false" /><span
+                          class="el-checkbox__inner"
+                        ></span></span
+                      ><span class="el-checkbox__label"
+                        ><div data-v-1c8aa56b="" class="term-item">
+                          <span data-v-1c8aa56b="">我已阅读并同意</span
+                          ><a
+                            data-v-1c8aa56b=""
+                            href="https://desk.ctyun.cn/html/agreement/"
+                            target="_blank"
+                            >《用户协议》</a
+                          ><span data-v-1c8aa56b="">和</span
+                          ><a
+                            data-v-1c8aa56b=""
+                            href="https://desk.ctyun.cn/html/privacy/"
+                            target="_blank"
+                            >《隐私政策》</a
+                          ><span data-v-1c8aa56b="">和</span
+                          ><a
+                            data-v-1c8aa56b=""
+                            href="https://desk.ctyun.cn/html/juveniles/"
+                            target="_blank"
+                            >《儿童信息保护政策》</a
+                          >
+                        </div>
+                        <!--v-if--></span
+                      ></label
+                    >
+                  </div>
+                  <div data-v-1c8aa56b="" class="form-item right-body__submit">
+                    <button
+                      data-v-1c8aa56b=""
+                      class="el-button el-button--primary btn-submit btn-submit-mobile"
+                      aria-disabled="false"
+                      type="button"
+                    >
+                      <!--v-if--><span class=""
+                        ><i
+                          data-v-1c8aa56b=""
+                          class="iconfont icon-verification-ode"
+                        ></i>
+                        安全登录
+                      </span></button
+                    ><button
+                      data-v-1c8aa56b=""
+                      class="el-button el-button--primary btn-submit btn-submit-pc"
+                      aria-disabled="false"
+                      type="button"
+                    >
+                      <!--v-if--><span class=""> 登录 </span>
+                    </button>
+                    <div data-v-1c8aa56b="" class="btn-sms-mobile">
+                      本机号码免密登录
+                    </div>
+                  </div>
+                  <div data-v-1c8aa56b="" class="term term-pc">
+                    <div data-v-1c8aa56b="" class="term-item">
+                      <span data-v-1c8aa56b="">登录即同意</span
+                      ><a
+                        data-v-1c8aa56b=""
+                        href="https://desk.ctyun.cn/html/agreement/"
+                        target="_blank"
+                        >用户协议</a
+                      ><span data-v-1c8aa56b="">和</span
+                      ><a
+                        data-v-1c8aa56b=""
+                        href="https://desk.ctyun.cn/html/privacy/"
+                        target="_blank"
+                        >隐私政策</a
+                      ><span data-v-1c8aa56b="">和</span>
+                    </div>
+                    <div data-v-1c8aa56b="" class="term-item">
+                      <a
+                        data-v-1c8aa56b=""
+                        href="https://desk.ctyun.cn/html/juveniles/"
+                        target="_blank"
+                        >儿童信息保护政策</a
+                      >
+                    </div>
+                  </div>
+                  <div data-v-1c8aa56b="" class="btn-wrap">
+                    <div data-v-1c8aa56b="" class="enterprise-btn">
+                      企业账号登录
+                    </div>
+                    <div data-v-1c8aa56b="" class="enterprise-btn-pc">
+                      企业账号登录
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-v-49bab57b="" class="version">
+              v3.2.0 天翼云提供安全加密服务
+            </div>
+          </main>
+          <footer data-v-49bab57b="" class="footer">
+            <div data-v-3ae3c8d4="" data-v-49bab57b="" class="footer-btns">
+              <div data-v-3ae3c8d4="" class="footer-btn-item btn-active">
+                电脑模式
+              </div>
+              <div data-v-3ae3c8d4="" class="footer-btn-item false">
+                投屏模式
+              </div>
+            </div>
+          </footer>
+        </div>
+        <!---->
+      </div>
+      <!----><!---->
+    </div>
+    <div id="browser-tips">
+      <div class="tips-img"><img src="static/no-desktop.png" alt="" /></div>
+      <div id="pc-tips">
+        <div class="tips-body">
+          当前浏览器版本过低，建议您
+          <a
+            href="https://www.microsoft.com/zh-cn/edge/download"
+            target="_blank"
+            >更新浏览器</a
+          >
+          或 下载客户端体验。
+        </div>
+        <div class="tips-fn">
+          <a
+            class="link-client"
+            href="https://desk.ctyun.cn/html/download/index.html"
+            target="_blank"
+            >下载客户端</a
+          >
+        </div>
+      </div>
+      <div id="mobile-tips">
+        <div class="tips-body">当前系统版本过低，请升级系统后再使用此功能</div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        if (location.search.indexOf("force=1") > -1) {
+          return;
+        }
+        var $tips = document.getElementById("browser-tips");
+        var $tipsPc = document.getElementById("pc-tips");
+        var $tipsMobile = document.getElementById("mobile-tips");
+        var $tipsCloseButton = document.getElementById(
+          "browser-tips-close-btn",
+        );
+        var $normal = document.getElementById("app");
+
+        var agent = navigator.userAgent.toLowerCase();
+        var isAndroid = /(android)/i.test(agent);
+        var isiOS = /(iphone|ipad|ipod|ios)/i.test(agent);
+
+        // 抢先体验处理（主要是移动端触发）
+        // $tipsCloseButton.addEventListener('click', function(){
+        //   $tips.style.display = 'none';
+        //   $normal.style.display = 'block';
+        // });
+
+        // 移动端处理
+        function fMobProcessing() {
+          $normal.style.display = "none";
+          $tips.style.display = "block";
+          $tipsMobile.style.display = "block";
+
+          // 判断系统版本是否支持使用
+          var iosVer = 0;
+          var andVer = 0;
+
+          if (isAndroid) {
+            try {
+              var _v_info = agent.match(/android [\d._]+/gi);
+              andVer = (_v_info + "")
+                .replace(/[^0-9|_.]/gi, "")
+                .replace(/_/gi, "."); //得到版本号
+              andVer = parseInt(andVer.split(".")[0]); // 得到版本号第一位
+            } catch (e) {}
+          } else {
+            try {
+              var iosVersionArr = agent.match(/os (.*?) like mac os/);
+              iosVer = Number(iosVersionArr[1].match(/\d+/)[0]);
+            } catch (e) {}
+          }
+
+          // 移动设备白名单 放开体验
+          if (iosVer >= 15 || andVer >= 9) {
+            // 屏蔽入口
+            // $tipsCloseButton.style.display = 'block';
+            $tips.style.display = "none";
+            $normal.style.display = "block";
+          }
+        }
+
+        // 其它设备处理
+        function fCommonProcessing() {
+          // 其它设备放开chrome和ff
+          var isChrome = /(chrome)/i.test(agent);
+          var isFirefox = /(firefox)/i.test(agent);
+          var isSafari = /(safari)/i.test(agent) && !isChrome;
+          var isPcSupport = false;
+
+          if (isChrome) {
+            try {
+              var chromeVerArr = agent.match(/chrome\/[\d.]+/gi);
+              var chromeVer = Number(
+                chromeVerArr[0].split("/")[1].split(".")[0],
+              );
+              if (chromeVer > 75) {
+                isPcSupport = true;
+              }
+            } catch (e) {}
+          } else if (isFirefox) {
+            try {
+              var ffVersionArr = agent.match(/firefox\/[\d.]+/gi);
+              var ffVersion = Number(
+                ffVersionArr[0].split("/")[1].split(".")[0],
+              );
+              if (ffVersion > 72) {
+                isPcSupport = true;
+              }
+            } catch (e) {}
+          } else if (isSafari) {
+            try {
+              var sfVersionArr = agent.match(/Version\/[\d.]+/gi);
+              var sfVersion = Number(
+                sfVersionArr[0].split("/")[1].split(".")[0],
+              );
+              if (sfVersion > 10) {
+                isPcSupport = true;
+              }
+            } catch (e) {}
+          }
+          // 不支持出提示
+          if (!isPcSupport) {
+            // pc端不兼容提示
+            $tips.style.display = "block";
+            $tipsPc.style.display = "block";
+            $normal.style.display = "none";
+          }
+        }
+
+        // 移动设备判断
+        if (isAndroid || isiOS) {
+          fMobProcessing();
+          document.body.setAttribute("data-equipment", "mobile");
+        } else {
+          fCommonProcessing();
+        }
+      })();
+
+      var Module = {};
+      var WASM_READY = false;
+      Module.onRuntimeInitialized = function () {
+        WASM_READY = true;
+      };
+    </script>
+    <script>
+      // 支持pwa
+      if (
+        navigator.serviceWorker &&
+        !navigator.userAgent.toLowerCase().includes("miniprogram")
+      ) {
+        navigator.serviceWorker.register("./sw.js", { scope: "./" });
+      }
+    </script>
+    <script src="static/common/main.1755740488270.js"></script>
+    <script
+      defer="defer"
+      src="https://t.ctyun.cn/apm/script.js"
+      ctct-website-id="58a9e6d0-ff36-4ea9-957c-70a82fd7ad99"
+      ctct-region="public"
+    ></script>
+    <script src="static/common/jweixin-1.3.2.js"></script>
+    <div id="el-popper-container-5257">
+      <!--v-if--><!--v-if--><!--v-if-->
+      <div
+        class="el-popper is-pure is-light el-dropdown__popper"
+        tabindex="-1"
+        aria-hidden="true"
+        data-popper-placement="bottom-end"
+        style="
+          z-index: 2005;
+          display: none;
+          position: absolute;
+          left: 1322.29px;
+          top: 72px;
+          margin: 0px;
+        "
+      >
+        <!-- Workaround bug #6378 -->
+        <div class="el-scrollbar">
+          <div class="el-scrollbar__wrap el-scrollbar__wrap--hidden-default">
+            <div class="el-scrollbar__view el-dropdown__list" style="">
+              <ul
+                data-v-6061119a=""
+                class="el-dropdown-menu"
+                tabindex="-1"
+                role="menu"
+                aria-labelledby="el-id-805-3"
+                id="el-id-805-4"
+                style="outline: none"
+              >
+                <!----><!----><!----><!----><!--v-if-->
+                <li
+                  data-el-collection-item=""
+                  aria-disabled="false"
+                  class="el-dropdown-menu__item"
+                  tabindex="-1"
+                  role="menuitem"
+                >
+                  <!--v-if--><i
+                    data-v-6061119a=""
+                    class="iconfont icon-caidanguanli"
+                    style="font-size: 20px"
+                  ></i>
+                  设置
+                </li>
+                <!--v-if-->
+                <li
+                  data-el-collection-item=""
+                  aria-disabled="false"
+                  class="el-dropdown-menu__item"
+                  tabindex="-1"
+                  role="menuitem"
+                >
+                  <!--v-if--><i
+                    data-v-6061119a=""
+                    class="iconfont icon-baozhang"
+                    style="font-size: 20px"
+                  ></i>
+                  报障
+                </li>
+                <div
+                  data-v-6061119a=""
+                  class="el-divider el-divider--horizontal"
+                  role="separator"
+                  style="--el-border-style: solid"
+                >
+                  <!--v-if-->
+                </div>
+                <!--v-if-->
+                <li
+                  data-el-collection-item=""
+                  aria-disabled="false"
+                  class="el-dropdown-menu__item"
+                  tabindex="-1"
+                  role="menuitem"
+                >
+                  <!--v-if--><i
+                    data-v-6061119a=""
+                    class="iconfont icon-bangzhuwendang"
+                    style="font-size: 20px"
+                  ></i>
+                  帮助手册
+                </li>
+                <!--v-if-->
+                <li
+                  data-el-collection-item=""
+                  aria-disabled="false"
+                  class="el-dropdown-menu__item"
+                  tabindex="-1"
+                  role="menuitem"
+                >
+                  <!--v-if--><i
+                    data-v-6061119a=""
+                    class="iconfont icon-alert-circle-outline"
+                    style="font-size: 20px"
+                  ></i>
+                  关于
+                </li>
+                <!----><!---->
+              </ul>
+            </div>
+          </div>
+          <div class="el-scrollbar__bar is-horizontal" style="display: none">
+            <div
+              class="el-scrollbar__thumb"
+              style="transform: translateX(0%)"
+            ></div>
+          </div>
+          <div class="el-scrollbar__bar is-vertical" style="display: none">
+            <div
+              class="el-scrollbar__thumb"
+              style="transform: translateY(0%)"
+            ></div>
+          </div>
+        </div>
+        <span
+          class="el-popper__arrow"
+          data-popper-arrow=""
+          style="position: absolute; left: 5.14286px"
+        ></span>
+      </div>
+      <!--v-if--><!--v-if-->
+      <div
+        class="el-popper is-light el-popover mobile-menu-popover"
+        tabindex="-1"
+        aria-hidden="true"
+        data-popper-reference-hidden=""
+        data-popper-escaped=""
+        data-popper-placement="bottom"
+        style="
+          z-index: 2006;
+          width: 34vw;
+          display: none;
+          position: absolute;
+          inset: 0px auto auto 0px;
+          margin: 0px;
+          transform: translate3d(0px, 12px, 0px);
+        "
+      >
+        <!-- Workaround bug #6378 --><!--v-if-->
+        <div data-v-6061119a="" class="mobile-menu-content">
+          <div data-v-6061119a="" class="mobile-menu-item">报障</div>
+          <div data-v-6061119a="" class="mobile-menu-item">帮助手册</div>
+          <div data-v-6061119a="" class="mobile-menu-item">客户端下载</div>
+          <div data-v-6061119a="" class="mobile-menu-item">用户协议</div>
+          <div data-v-6061119a="" class="mobile-menu-item">隐私政策</div>
+          <div data-v-6061119a="" class="mobile-menu-item text-truncate">
+            儿童个人信息保护政策
+          </div>
+          <div data-v-6061119a="" class="mobile-menu-item">添加到桌面</div>
+        </div>
+        <span
+          class="el-popper__arrow"
+          data-popper-arrow=""
+          style="
+            position: absolute;
+            left: 0px;
+            transform: translate3d(5.14286px, 0px, 0px);
+          "
+        ></span>
+      </div>
+      <div
+        class="el-popper is-light el-popover app-popover"
+        tabindex="-1"
+        aria-hidden="true"
+        data-popper-reference-hidden=""
+        data-popper-escaped=""
+        data-popper-placement="bottom"
+        style="
+          z-index: 2007;
+          display: none;
+          position: absolute;
+          inset: 0px auto auto 0px;
+          margin: 0px;
+          transform: translate3d(0px, 12px, 0px);
+        "
+      >
+        <!-- Workaround bug #6378 --><!--v-if-->
+        <div
+          data-v-f838eeb6=""
+          class="e-qr"
+          title="https://desk.ctyun.cn/html/download/index.html"
+        >
+          <div data-v-f838eeb6="" class="logo-wrap">
+            <img
+              data-v-f838eeb6=""
+              class="logo"
+              src="static/icon_32x32@2x.png"
+            />
+          </div>
+          <canvas width="118" height="118" style="display: none"></canvas
+          ><img
+            alt="Scan me!"
+            src="data:image/png;base64,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"
+            style="display: block"
+          />
+        </div>
+        <div data-v-f838eeb6="">扫码下载天翼量子AI云电脑 APP</div>
+        <!--v-if-->
+      </div>
+      <div
+        class="el-popper is-light el-popover app-popover"
+        tabindex="-1"
+        aria-hidden="true"
+        data-popper-reference-hidden=""
+        data-popper-escaped=""
+        data-popper-placement="bottom"
+        style="
+          z-index: 2008;
+          display: none;
+          position: absolute;
+          inset: 0px auto auto 0px;
+          margin: 0px;
+          transform: translate3d(0px, 12px, 0px);
+        "
+      >
+        <!-- Workaround bug #6378 --><!--v-if-->
+        <div data-v-f838eeb6="" class="e-qr" title="https://yilian.ctyun.cn">
+          <div data-v-f838eeb6="" class="logo-wrap">
+            <img
+              data-v-f838eeb6=""
+              class="logo"
+              src="https://deskcdn.ctyun.cn/pccdnstatic/imgs/bgzs.6e47d5b5cd5605330e48.png"
+            />
+          </div>
+          <canvas width="118" height="118" style="display: none"></canvas
+          ><img
+            alt="Scan me!"
+            src="data:image/png;base64,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"
+            style="display: block"
+          />
+        </div>
+        <div data-v-f838eeb6="">扫码下载翼连APP</div>
+        <!--v-if-->
+      </div>
+      <div
+        class="el-popper is-light el-popover"
+        tabindex="-1"
+        aria-hidden="true"
+        data-popper-placement="bottom"
+        style="
+          z-index: 2010;
+          width: 240px;
+          display: none;
+          position: absolute;
+          inset: 0px auto auto 0px;
+          margin: 0px;
+          transform: translate3d(1078.29px, 72px, 0px);
+        "
+      >
+        <!-- Workaround bug #6378 --><!--v-if-->
+        <div data-v-6061119a="" class="pwa-conent">
+          <img
+            data-v-6061119a=""
+            class="pwa-logo"
+            src="https://deskcdn.ctyun.cn/pccdnstatic/imgs/qr-logo.7b4a86644b731551e440.png"
+          />
+          <p data-v-6061119a="" class="pwa-title">添加天翼量子AI云电脑到桌面</p>
+          <p data-v-6061119a="" class="pwa-desc">安装后可以在桌面快捷访问</p>
+          <button
+            data-v-6061119a=""
+            class="el-button el-button--primary ui4"
+            aria-disabled="false"
+            type="button"
+            width="168"
+          >
+            <!--v-if--><span class="">立即添加</span>
+          </button>
+        </div>
+        <span
+          class="el-popper__arrow"
+          data-popper-arrow=""
+          style="
+            position: absolute;
+            left: 0px;
+            transform: translate3d(5.14286px, 0px, 0px);
+          "
+        ></span>
+      </div>
+    </div>
+  </body>
+  <rq-implicit-test-rule-widget
+    class="rq-element"
+    draggable="true"
+    style="display: none"
+  ></rq-implicit-test-rule-widget>
+</html>
