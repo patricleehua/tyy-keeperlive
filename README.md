@@ -136,6 +136,51 @@ python -m keepliver.cli login --backend selenium --browser edge --edgedriver ./d
 python -m keepliver.cli auto --interval 1800
 ```
 
+#### 后台运行 / 查看日志 / 停止
+
+```bash
+# 后台运行
+nohup python -m keepliver.cli auto --interval 1800 \
+  --captcha-base-url https://your.domain --captcha-port 8000 \
+  --browser edge --edgedriver ./drivers/msedgedriver \
+  --auto-connect --headless > nohup.out 2>&1 &
+
+# 查看运行状态
+ps -ef | grep keepliver
+
+# 查看日志
+tail -n 200 nohup.out
+
+# 停止（替换为实际 PID）
+kill <PID>
+```
+
+#### systemd 开机自启（Linux）
+
+```bash
+sudo tee /etc/systemd/system/ctyun-keepalive.service > /dev/null <<'EOF'
+[Unit]
+Description=CTYUN Keepalive (auto)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/data/tyy-keeperlive
+ExecStart=/data/tyy-keeperlive/.venv/bin/python -m keepliver.cli auto --interval 1800 --captcha-base-url https://your.domain --captcha-port 8000 --browser edge --edgedriver ./drivers/msedgedriver --auto-connect --headless
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable ctyun-keepalive.service
+sudo systemctl start ctyun-keepalive.service
+sudo systemctl status ctyun-keepalive.service
+```
+
 #### 自动保活参数完整说明
 
 ```
