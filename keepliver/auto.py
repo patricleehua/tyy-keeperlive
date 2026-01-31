@@ -171,6 +171,14 @@ def main() -> None:
     parser.add_argument("--telegram-test", action="store_true")
 
     args = parser.parse_args()
+    if not args.secrets:
+        default_secrets = os.path.join(os.path.dirname(__file__), "secrets.json")
+        if os.path.exists(default_secrets):
+            args.secrets = default_secrets
+            if args.login_mode == "qr":
+                args.login_mode = "account"
+    if args.headless and args.login_mode == "qr":
+        print("Headless + QR login cannot complete; please use account login or initialize profile.")
     if not args.profile_dir:
         if args.backend == "playwright":
             args.profile_dir = os.path.join(os.path.dirname(__file__), ".pw-profile")
@@ -193,19 +201,13 @@ def main() -> None:
         ]
         args.edgedriver = next((p for p in candidates if os.path.exists(p)), "msedgedriver")
 
-    from keepliver import keepalive
-
-    cfg = _ensure_config(args.config, args)
-
+    # Auto keepalive via desktop list -> connect flow (no direct HTTP keepalive).
     while True:
-        ok, status, payload = keepalive.send_keepalive_once(cfg)
-        print("status:", status, "response:", payload)
-        if not ok:
-            print("keepalive failed, re-login and retry once...")
-            _run_login(args)
-            cfg = _ensure_config(args.config, args)
-            ok2, status2, payload2 = keepalive.send_keepalive_once(cfg)
-            print("status:", status2, "response:", payload2)
+        if args.backend != "selenium":
+            print("auto keepalive requires selenium; overriding backend to selenium.")
+            args.backend = "selenium"
+        args.auto_connect = True
+        _login_selenium(args)
         time.sleep(args.interval)
 
 

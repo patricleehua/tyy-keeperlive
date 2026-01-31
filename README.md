@@ -140,16 +140,15 @@ python -m keepliver.cli auto --interval 1800
 
 ```bash
 # 后台运行
-nohup python -m keepliver.cli auto --interval 1800 \
-  --captcha-base-url https://your.domain --captcha-port 8000 \
-  --browser edge --edgedriver ./drivers/msedgedriver \
-  --auto-connect --headless > nohup.out 2>&1 &
+
+nohup python -m keepliver.cli auto --interval 1800 --captcha-base-url https://your.domain --captcha-port 8000 --browser edge --edgedriver ./drivers/msedgedriver --auto-connect --headless  > keepliver.out 2>&1 &
+
 
 # 查看运行状态
 ps -ef | grep keepliver
 
 # 查看日志
-tail -n 200 nohup.out
+tail -n 200 keepliver.out
 
 # 停止（替换为实际 PID）
 kill <PID>

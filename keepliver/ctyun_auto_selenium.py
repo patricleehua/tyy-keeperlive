@@ -1021,7 +1021,8 @@ def main():
         driver = webdriver.Chrome(service=service, options=options)
 
     try:
-        driver.get("https://pc.ctyun.cn")
+        desktop_list_url = "https://pc.ctyun.cn/#/desktop-list"
+        driver.get(desktop_list_url)
         # Inject hook to capture device_info before encryption
         driver.execute_script(HOOK_JS)
 
@@ -1117,6 +1118,16 @@ def main():
                 except Exception:
                     return False
 
+        # Always ensure we are on desktop list before clicking connect
+        driver.get(desktop_list_url)
+        try:
+            WebDriverWait(driver, 15).until(
+                lambda d: d.execute_script("return document.readyState") == "complete"
+            )
+        except Exception:
+            pass
+        time.sleep(2)
+
         if args.auto_connect:
             print("authData found. Trying to auto-click Connect...")
             try_auto_click()
@@ -1184,8 +1195,8 @@ def main():
         with open(args.out, "w", encoding="utf-8") as f:
             json.dump(output, f, ensure_ascii=True, indent=2)
         print(f"Saved: {args.out}")
-        print("Waiting 5 seconds before closing browser...")
-        time.sleep(5)
+        print("Waiting 10 seconds before closing browser...")
+        time.sleep(10)
     finally:
         driver.quit()
 
