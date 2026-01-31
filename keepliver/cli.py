@@ -83,6 +83,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Captcha web port (0 = console).",
     )
     login.add_argument(
+        "--captcha-base-url",
+        default=None,
+        help="Captcha input base URL (used in Telegram messages).",
+    )
+    login.add_argument(
         "--phone-verify-template",
         default=None,
         help="HTML template for phone verify input page.",
@@ -171,6 +176,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Captcha web port (0 = console).",
     )
     auto.add_argument(
+        "--captcha-base-url",
+        default=None,
+        help="Captcha input base URL (used in Telegram messages).",
+    )
+    auto.add_argument(
         "--phone-verify-template",
         default=None,
         help="HTML template for phone verify input page.",
@@ -231,6 +241,7 @@ def main() -> None:
         _add_if(argv, "--captcha-mode", args.captcha_mode)
         _add_if(argv, "--captcha-timeout", args.captcha_timeout)
         _add_if(argv, "--captcha-port", args.captcha_port)
+        _add_if(argv, "--captcha-base-url", args.captcha_base_url)
         _add_if(argv, "--phone-verify-template", args.phone_verify_template)
         _add_if(argv, "--telegram-token", args.telegram_token)
         _add_if(argv, "--telegram-chat-id", args.telegram_chat_id)
@@ -279,6 +290,7 @@ def main() -> None:
         _add_if(argv, "--captcha-mode", args.captcha_mode)
         _add_if(argv, "--captcha-timeout", args.captcha_timeout)
         _add_if(argv, "--captcha-port", args.captcha_port)
+        _add_if(argv, "--captcha-base-url", args.captcha_base_url)
         _add_if(argv, "--phone-verify-template", args.phone_verify_template)
         _add_if(argv, "--telegram-token", args.telegram_token)
         _add_if(argv, "--telegram-chat-id", args.telegram_chat_id)

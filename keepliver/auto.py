@@ -42,6 +42,7 @@ def _login_selenium(args) -> None:
     _add_if(argv, "--captcha-mode", args.captcha_mode)
     _add_if(argv, "--captcha-timeout", args.captcha_timeout)
     _add_if(argv, "--captcha-port", args.captcha_port)
+    _add_if(argv, "--captcha-base-url", args.captcha_base_url)
     _add_if(argv, "--phone-verify-template", args.phone_verify_template)
     _add_if(argv, "--telegram-token", args.telegram_token)
     _add_if(argv, "--telegram-chat-id", args.telegram_chat_id)
@@ -155,6 +156,11 @@ def main() -> None:
     )
     parser.add_argument("--captcha-timeout", type=int, default=120)
     parser.add_argument("--captcha-port", type=int, default=8000)
+    parser.add_argument(
+        "--captcha-base-url",
+        default="http://127.0.0.1",
+        help="Base URL for captcha input page (used in Telegram messages).",
+    )
     parser.add_argument(
         "--phone-verify-template",
         default=os.path.join(os.path.dirname(__file__), "login-phone-verify.html"),

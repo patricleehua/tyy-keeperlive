@@ -664,7 +664,7 @@ def _handle_phone_verify_dialog(driver, args) -> bool:
                     if _tg_send_message(
                         args.telegram_token,
                         args.telegram_chat_id,
-                        "检测到需要短信验证码，请回复验证码。",
+                        f"检测到需要短信验证码，请在 {args.telegram_timeout}s 内回复验证码（超时将提供输入地址）。",
                     ):
                         code, offset = _tg_wait_for_code(
                             args.telegram_token,
@@ -679,7 +679,16 @@ def _handle_phone_verify_dialog(driver, args) -> bool:
                     server_sms = _start_phone_verify_server(
                         image_b64, args.captcha_port, qsms, args.phone_verify_template, True
                     )
-                    print(f"SMS verify page: http://127.0.0.1:{server_sms.server_port}/")
+                    local_url = f"http://127.0.0.1:{server_sms.server_port}/"
+                    base_url = (args.captcha_base_url or "http://127.0.0.1").rstrip("/")
+                    url = f"{base_url}:{server_sms.server_port}/"
+                    print(f"SMS verify page: {local_url}")
+                    if args.telegram_token and args.telegram_chat_id:
+                        _tg_send_message(
+                            args.telegram_token,
+                            args.telegram_chat_id,
+                            f"Telegram 等待验证码超时，请打开输入页：{url}",
+                        )
                     try:
                         payload_sms = qsms.get(timeout=args.captcha_timeout)
                         sms_code = payload_sms.get("sms_code", "").strip()
@@ -906,6 +915,11 @@ def main():
         type=int,
         default=8000,
         help="Port for captcha web input (0 = console input).",
+    )
+    parser.add_argument(
+        "--captcha-base-url",
+        default="http://127.0.0.1",
+        help="Base URL for captcha input page (used in Telegram messages).",
     )
     parser.add_argument(
         "--phone-verify-template",

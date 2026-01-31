@@ -52,6 +52,43 @@ python -m keepliver.cli login --backend selenium --browser edge --edgedriver .\d
 python -m keepliver.cli auto --interval 1800
 ```
 
+#### 自动保活参数完整说明
+
+```
+--config                config.json 路径（默认 keepliver/config.json）
+--interval              保活间隔秒数（默认 1800）
+--backend               登录后端：selenium / playwright（默认 selenium）
+--profile-dir           浏览器 profile 目录（默认自动选择）
+--timeout               登录等待超时秒数（默认 600）
+--chromedriver          ChromeDriver 路径（默认自动探测）
+--chrome-binary         Chrome 浏览器二进制路径（可选）
+--edgedriver            EdgeDriver 路径（默认自动探测）
+--edge-binary           Edge 浏览器二进制路径（可选）
+--browser               selenium 浏览器：chrome / edge（默认 chrome）
+--auto-connect          自动点击“连接”
+--login-mode            登录模式：qr / account（默认 qr）
+--account               账号/手机号/邮箱
+--password              密码
+--secrets               secrets.json 路径（可写账号/密码/Telegram）
+--headless              无界面模式（首次登录不建议）
+--force-headless        强制 headless（即使首次登录）
+--captcha-mode          验证码模式：auto / manual / off（默认 auto）
+--captcha-timeout       验证码等待秒数（默认 120）
+--captcha-port          验证码输入页端口（默认 8000，0=控制台输入）
+--captcha-base-url      验证码输入页基础 URL（Telegram 消息中用于可点击链接，默认 http://127.0.0.1）
+--phone-verify-template 手机验证输入页模板
+--telegram-token        Telegram Bot Token
+--telegram-chat-id      Telegram Chat ID
+--telegram-timeout      Telegram 等待验证码秒数（默认与 captcha-timeout 一致，默认 120）
+--telegram-test         启动时发送一条测试消息
+```
+
+#### 验证码与 Telegram 逻辑说明
+
+- 图形验证码默认启用 OCR（`--captcha-mode auto`）。识别失败会回退到输入页（`--captcha-port`）。
+- 手机验证短信：如果配置了 Telegram，会先等待 `--telegram-timeout` 秒接收验证码（默认 120s）；若超时，会发送一条消息提示超时，并给出输入页 URL（`<captcha-base-url>:<captcha-port>/`，默认 `http://127.0.0.1:8000/`），用户可手动输入。本机控制台仍显示 `127.0.0.1` 地址。
+- 如需远程输入页，请确保端口可访问（例如使用端口映射或 SSH 隧道）。
+
 #### 自动保活参数示例（Windows）
 
 ```powershell
@@ -63,6 +100,10 @@ python -m keepliver.cli auto --interval 1800 `
 # 使用 Edge
 python -m keepliver.cli auto --interval 1800 `
   --browser edge --edgedriver .\\drivers\\msedgedriver.exe --auto-connect
+
+# Telegram 消息中的输入页使用公网域名
+python -m keepliver.cli auto --interval 1800 `
+  --captcha-base-url https://your.domain --captcha-port 8000
 ```
 
 ### 单次/循环保活
@@ -95,6 +136,43 @@ python -m keepliver.cli login --backend selenium --browser edge --edgedriver ./d
 python -m keepliver.cli auto --interval 1800
 ```
 
+#### 自动保活参数完整说明
+
+```
+--config                config.json 路径（默认 keepliver/config.json）
+--interval              保活间隔秒数（默认 1800）
+--backend               登录后端：selenium / playwright（默认 selenium）
+--profile-dir           浏览器 profile 目录（默认自动选择）
+--timeout               登录等待超时秒数（默认 600）
+--chromedriver          ChromeDriver 路径（默认自动探测）
+--chrome-binary         Chrome 浏览器二进制路径（可选）
+--edgedriver            EdgeDriver 路径（默认自动探测）
+--edge-binary           Edge 浏览器二进制路径（可选）
+--browser               selenium 浏览器：chrome / edge（默认 chrome）
+--auto-connect          自动点击“连接”
+--login-mode            登录模式：qr / account（默认 qr）
+--account               账号/手机号/邮箱
+--password              密码
+--secrets               secrets.json 路径（可写账号/密码/Telegram）
+--headless              无界面模式（首次登录不建议）
+--force-headless        强制 headless（即使首次登录）
+--captcha-mode          验证码模式：auto / manual / off（默认 auto）
+--captcha-timeout       验证码等待秒数（默认 120）
+--captcha-port          验证码输入页端口（默认 8000，0=控制台输入）
+--captcha-base-url      验证码输入页基础 URL（Telegram 消息中用于可点击链接，默认 http://127.0.0.1）
+--phone-verify-template 手机验证输入页模板
+--telegram-token        Telegram Bot Token
+--telegram-chat-id      Telegram Chat ID
+--telegram-timeout      Telegram 等待验证码秒数（默认与 captcha-timeout 一致，默认 120）
+--telegram-test         启动时发送一条测试消息
+```
+
+#### 验证码与 Telegram 逻辑说明
+
+- 图形验证码默认启用 OCR（`--captcha-mode auto`）。识别失败会回退到输入页（`--captcha-port`）。
+- 手机验证短信：如果配置了 Telegram，会先等待 `--telegram-timeout` 秒接收验证码（默认 120s）；若超时，会发送一条消息提示超时，并给出输入页 URL（`<captcha-base-url>:<captcha-port>/`，默认 `http://127.0.0.1:8000/`），用户可手动输入。本机控制台仍显示 `127.0.0.1` 地址。
+- 如需远程输入页，请确保端口可访问（例如使用端口映射或 SSH 隧道）。
+
 #### 自动保活参数示例（Linux）
 
 ```bash
@@ -106,6 +184,10 @@ python -m keepliver.cli auto --interval 1800 \\
 # 使用 Edge
 python -m keepliver.cli auto --interval 1800 \\
   --browser edge --edgedriver ./drivers/msedgedriver --auto-connect
+
+# Telegram 消息中的输入页使用公网域名
+python -m keepliver.cli auto --interval 1800 \\
+  --captcha-base-url https://your.domain --captcha-port 8000
 ```
 
 ### 单次/循环保活
