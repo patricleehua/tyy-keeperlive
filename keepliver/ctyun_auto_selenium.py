@@ -15,6 +15,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.edge.options import Options as EdgeOptions
+from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -25,6 +27,29 @@ def _safe_json_loads(text: str):
         return json.loads(text)
     except Exception:
         return None
+
+
+_PERFLOG_WARNED = False
+
+
+def _get_performance_logs(driver):
+    global _PERFLOG_WARNED
+    try:
+        log_types = getattr(driver, "log_types", None)
+        if log_types is not None and "performance" not in log_types:
+            if not _PERFLOG_WARNED:
+                print("Performance logs unavailable; skipping network capture.")
+                _PERFLOG_WARNED = True
+            return []
+    except Exception:
+        pass
+    try:
+        return driver.get_log("performance")
+    except Exception:
+        if not _PERFLOG_WARNED:
+            print("Performance logs unavailable; skipping network capture.")
+            _PERFLOG_WARNED = True
+        return []
 
 
 def _safe_load_json(path: str) -> Optional[dict]:
@@ -126,6 +151,15 @@ def _tg_wait_for_code(
                 return text, last_offset
         time.sleep(0.5)
     return None, last_offset
+
+
+def _resolve_driver_path(path: str, exe_base: str) -> str:
+    if os.path.isdir(path):
+        exe_name = f"{exe_base}.exe" if os.name == "nt" else exe_base
+        path = os.path.join(path, exe_name)
+    if os.path.exists(path):
+        path = os.path.abspath(path)
+    return path
 
 
 def _start_captcha_server(image_b64: str, port: int, queue: Queue) -> HTTPServer:
@@ -588,7 +622,7 @@ def _handle_phone_verify_dialog(driver, args) -> bool:
         sms_sent = False
         try:
             time.sleep(1)
-            logs = driver.get_log("performance")
+            logs = _get_performance_logs(driver)
             for entry in logs:
                 try:
                     message = json.loads(entry["message"]).get("message", {})
@@ -695,6 +729,81 @@ def _handle_phone_verify_dialog(driver, args) -> bool:
 
 HOOK_JS = r"""
 (() => {
+  const CAPTURE_PATH = "/api/desktop/client/connect";
+  const CTG_PREFIX = "ctg-";
+  const capture = (url, method, headers) => {
+    try {
+      if (!url || !method) return;
+      if (!url.includes(CAPTURE_PATH)) return;
+      if (String(method).toUpperCase() !== "POST") return;
+      const ctg = {};
+      if (headers && typeof headers.forEach === "function") {
+        headers.forEach((v, k) => {
+          if (String(k).toLowerCase().startsWith(CTG_PREFIX)) {
+            ctg[k] = v;
+          }
+        });
+      } else if (headers && typeof headers === "object") {
+        for (const k of Object.keys(headers)) {
+          if (String(k).toLowerCase().startsWith(CTG_PREFIX)) {
+            ctg[k] = headers[k];
+          }
+        }
+      }
+      if (Object.keys(ctg).length > 0) {
+        window.__ctyun_connect_capture = { url, headers: ctg, ts: Date.now() };
+      }
+    } catch (e) {}
+  };
+
+  // Hook fetch
+  try {
+    const origFetch = window.fetch;
+    if (origFetch) {
+      window.fetch = function(input, init) {
+        try {
+          const req = input instanceof Request ? input : null;
+          const url = req ? req.url : String(input || "");
+          const method = (init && init.method) || (req && req.method) || "GET";
+          const hdrs = new Headers();
+          const h1 = req && req.headers ? req.headers : null;
+          const h2 = init && init.headers ? init.headers : null;
+          if (h1) new Headers(h1).forEach((v, k) => hdrs.set(k, v));
+          if (h2) new Headers(h2).forEach((v, k) => hdrs.set(k, v));
+          capture(url, method, hdrs);
+        } catch (e) {}
+        return origFetch.apply(this, arguments);
+      };
+    }
+  } catch (e) {}
+
+  // Hook XHR
+  try {
+    const origOpen = XMLHttpRequest.prototype.open;
+    const origSetHeader = XMLHttpRequest.prototype.setRequestHeader;
+    const origSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.open = function(method, url) {
+      this.__ctyun_method = method;
+      this.__ctyun_url = url;
+      this.__ctyun_headers = {};
+      return origOpen.apply(this, arguments);
+    };
+    XMLHttpRequest.prototype.setRequestHeader = function(k, v) {
+      try {
+        this.__ctyun_headers = this.__ctyun_headers || {};
+        this.__ctyun_headers[k] = v;
+      } catch (e) {}
+      return origSetHeader.apply(this, arguments);
+    };
+    XMLHttpRequest.prototype.send = function() {
+      try {
+        const hdrs = new Headers(this.__ctyun_headers || {});
+        capture(this.__ctyun_url, this.__ctyun_method, hdrs);
+      } catch (e) {}
+      return origSend.apply(this, arguments);
+    };
+  } catch (e) {}
+
   const keys = [
     "objId","objType","osType","deviceId","deviceCode",
     "deviceName","sysVersion","appVersion","hostName",
@@ -723,7 +832,7 @@ PHONE_VERIFY_STATE = {
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Auto-capture CTYUN device_info + ctg headers + authData via Selenium+ChromeDriver."
+        description="Auto-capture CTYUN device_info + ctg headers + authData via Selenium."
     )
     parser.add_argument(
         "--profile-dir",
@@ -736,9 +845,25 @@ def main():
         help="Path to chromedriver (in PATH or absolute).",
     )
     parser.add_argument(
+        "--edgedriver",
+        default="msedgedriver",
+        help="Path to msedgedriver (in PATH or absolute).",
+    )
+    parser.add_argument(
+        "--browser",
+        choices=["chrome", "edge"],
+        default="chrome",
+        help="Browser type for selenium (default: chrome).",
+    )
+    parser.add_argument(
         "--chrome-binary",
         default="",
         help="Optional Chrome binary path.",
+    )
+    parser.add_argument(
+        "--edge-binary",
+        default="",
+        help="Optional Edge binary path.",
     )
     parser.add_argument(
         "--timeout",
@@ -837,10 +962,18 @@ def main():
                 "Telegram test: bot is configured successfully.",
             )
 
-    caps = DesiredCapabilities.CHROME.copy()
+    if args.browser == "edge":
+        caps = DesiredCapabilities.EDGE.copy()
+    else:
+        caps = DesiredCapabilities.CHROME.copy()
     caps["goog:loggingPrefs"] = {"performance": "ALL"}
+    caps["ms:loggingPrefs"] = {"performance": "ALL"}
 
-    options = Options()
+    if args.browser == "edge":
+        options = EdgeOptions()
+        options.use_chromium = True
+    else:
+        options = Options()
     options.add_argument(f"--user-data-dir={args.profile_dir}")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--disable-extensions")
@@ -858,20 +991,20 @@ def main():
             options.add_argument("--window-size=1280,720")
         else:
             print("Profile not initialized; ignoring --headless for first login.")
-    if args.chrome_binary:
-        options.binary_location = args.chrome_binary
-
-    # Accept relative path or directory (use chromedriver.exe inside on Windows)
-    chromedriver_path = args.chromedriver
-    if os.path.isdir(chromedriver_path):
-        exe_name = "chromedriver.exe" if os.name == "nt" else "chromedriver"
-        chromedriver_path = os.path.join(chromedriver_path, exe_name)
-    if os.path.exists(chromedriver_path):
-        chromedriver_path = os.path.abspath(chromedriver_path)
-
     options.set_capability("goog:loggingPrefs", caps.get("goog:loggingPrefs", {}))
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    options.set_capability("ms:loggingPrefs", caps.get("ms:loggingPrefs", {}))
+    if args.browser == "edge":
+        if args.edge_binary:
+            options.binary_location = args.edge_binary
+        edgedriver_path = _resolve_driver_path(args.edgedriver, "msedgedriver")
+        service = EdgeService(executable_path=edgedriver_path)
+        driver = webdriver.Edge(service=service, options=options)
+    else:
+        if args.chrome_binary:
+            options.binary_location = args.chrome_binary
+        chromedriver_path = _resolve_driver_path(args.chromedriver, "chromedriver")
+        service = Service(executable_path=chromedriver_path)
+        driver = webdriver.Chrome(service=service, options=options)
 
     try:
         driver.get("https://pc.ctyun.cn")
@@ -984,9 +1117,16 @@ def main():
         while time.time() - start < args.timeout:
             # Pull device_info captured by hook
             device_info = driver.execute_script("return window.__ctyun_device_info || null")
+            if not ctg_headers or not connect_url:
+                cap = driver.execute_script("return window.__ctyun_connect_capture || null")
+                if cap and isinstance(cap, dict):
+                    if not connect_url and cap.get("url"):
+                        connect_url = cap.get("url")
+                    if not ctg_headers and cap.get("headers"):
+                        ctg_headers = cap.get("headers")
 
             # Parse performance logs to find connect request headers
-            logs = driver.get_log("performance")
+            logs = _get_performance_logs(driver)
             for entry in logs:
                 try:
                     message = json.loads(entry["message"])
@@ -1030,6 +1170,8 @@ def main():
         with open(args.out, "w", encoding="utf-8") as f:
             json.dump(output, f, ensure_ascii=True, indent=2)
         print(f"Saved: {args.out}")
+        print("Waiting 5 seconds before closing browser...")
+        time.sleep(5)
     finally:
         driver.quit()
 

@@ -36,6 +36,14 @@ def build_parser() -> argparse.ArgumentParser:
     login.add_argument("--out", default=None, help="Output config path.")
     login.add_argument("--chromedriver", default=None, help="Path to chromedriver.")
     login.add_argument("--chrome-binary", default=None, help="Path to Chrome binary.")
+    login.add_argument("--edgedriver", default=None, help="Path to msedgedriver.")
+    login.add_argument("--edge-binary", default=None, help="Path to Edge binary.")
+    login.add_argument(
+        "--browser",
+        choices=["chrome", "edge"],
+        default=None,
+        help="Browser type for selenium (default: chrome).",
+    )
     login.add_argument("--auto-connect", action="store_true", help="Auto-click Connect.")
     login.add_argument(
         "--login-mode",
@@ -131,6 +139,9 @@ def main() -> None:
         _add_if(argv, "--profile-dir", args.profile_dir)
         _add_if(argv, "--chromedriver", args.chromedriver)
         _add_if(argv, "--chrome-binary", args.chrome_binary)
+        _add_if(argv, "--edgedriver", args.edgedriver)
+        _add_if(argv, "--edge-binary", args.edge_binary)
+        _add_if(argv, "--browser", args.browser)
         _add_if(argv, "--timeout", args.timeout)
         _add_if(argv, "--out", args.out)
         _add_if(argv, "--login-mode", args.login_mode)
