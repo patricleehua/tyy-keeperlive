@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 import time
+from datetime import datetime, timezone
 from typing import List, Optional
 
 
@@ -207,7 +208,11 @@ def main() -> None:
             print("auto keepalive requires selenium; overriding backend to selenium.")
             args.backend = "selenium"
         args.auto_connect = True
+        start_ts = datetime.now(timezone.utc).astimezone().isoformat(sep=" ", timespec="seconds")
+        print(f"[auto] start: {start_ts}", flush=True)
         _login_selenium(args)
+        end_ts = datetime.now(timezone.utc).astimezone().isoformat(sep=" ", timespec="seconds")
+        print(f"[auto] end: {end_ts}", flush=True)
         time.sleep(args.interval)
 
 
