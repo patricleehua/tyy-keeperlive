@@ -3,7 +3,7 @@ import argparse
 import hashlib
 import json
 import time
-from typing import Dict
+from typing import Dict, Tuple, Any
 
 import requests
 
@@ -28,6 +28,81 @@ def load_config(path: str) -> Dict:
         return json.load(f)
 
 
+def _extract_auth(cfg: Dict) -> Tuple[str, str, str, str]:
+    ctg_headers = {k.lower(): v for k, v in (cfg.get("ctg_headers") or {}).items()}
+    auth = cfg.get("auth") or {}
+    tenant_id_value = str(auth.get("tenantId") or ctg_headers.get("ctg-tenantid", ""))
+    userid_value = str(auth.get("userId") or ctg_headers.get("ctg-userid", ""))
+    version_value = str(ctg_headers.get("ctg-version", ""))
+    secret_key_value = str(auth.get("secretKey", ""))
+    return tenant_id_value, userid_value, version_value, secret_key_value
+
+
+def validate_config(cfg: Dict) -> None:
+    tenant_id, user_id, version, secret = _extract_auth(cfg)
+    if not (tenant_id and user_id and version and secret):
+        raise ValueError("Missing auth/ctg values in config.json")
+
+
+def send_keepalive_once(cfg: Dict, timeout: int = 20) -> Tuple[bool, int, Any]:
+    connect_url = cfg.get("connect_url") or "https://desk.ctyun.cn:8810/api/desktop/client/connect"
+    device_info = cfg.get("device_info") or {}
+    ctg_headers = {k.lower(): v for k, v in (cfg.get("ctg_headers") or {}).items()}
+    auth = cfg.get("auth") or {}
+
+    device_type_value = str(ctg_headers.get("ctg-devicetype", "60"))
+    tenant_id_value = str(auth.get("tenantId") or ctg_headers.get("ctg-tenantid", ""))
+    userid_value = str(auth.get("userId") or ctg_headers.get("ctg-userid", ""))
+    version_value = str(ctg_headers.get("ctg-version", ""))
+    secret_key_value = str(auth.get("secretKey", ""))
+
+    if not (tenant_id_value and userid_value and version_value and secret_key_value):
+        raise ValueError("Missing auth/ctg values in config.json")
+
+    base_headers = {
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        "content-type": "application/x-www-form-urlencoded",
+        "ctg-appmodel": ctg_headers.get("ctg-appmodel", "2"),
+        "ctg-devicecode": ctg_headers.get("ctg-devicecode", ""),
+        "ctg-devicetype": device_type_value,
+        "ctg-tenantid": tenant_id_value,
+        "ctg-userid": userid_value,
+        "ctg-version": version_value,
+        "origin": "https://pc.ctyun.cn",
+        "referer": "https://pc.ctyun.cn/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    }
+
+    for k in ("ctg-nego-ekeyid", "ctg-reqdata-etype"):
+        if k in ctg_headers:
+            base_headers[k] = ctg_headers[k]
+
+    request_id_value = str(int(time.time() * 1000))
+    timestamp_value = str(int(time.time() * 1000))
+    signature = build_signature(
+        device_type_value,
+        request_id_value,
+        tenant_id_value,
+        timestamp_value,
+        userid_value,
+        version_value,
+        secret_key_value,
+    )
+    headers = dict(base_headers)
+    headers["ctg-requestid"] = request_id_value
+    headers["ctg-timestamp"] = timestamp_value
+    headers["ctg-signaturestr"] = signature
+
+    resp = requests.post(connect_url, data=device_info, headers=headers, timeout=timeout)
+    try:
+        payload = resp.json()
+    except Exception:
+        payload = resp.text
+    ok = resp.status_code == 200
+    return ok, resp.status_code, payload
+
+
 def main():
     parser = argparse.ArgumentParser(description="CTYUN keepalive using captured config.")
     parser.add_argument(
@@ -49,71 +124,18 @@ def main():
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-
-    connect_url = cfg.get("connect_url") or "https://desk.ctyun.cn:8810/api/desktop/client/connect"
-    device_info = cfg.get("device_info") or {}
-    ctg_headers = {k.lower(): v for k, v in (cfg.get("ctg_headers") or {}).items()}
-    auth = cfg.get("auth") or {}
-
-    device_type_value = str(ctg_headers.get("ctg-devicetype", "60"))
-    tenant_id_value = str(auth.get("tenantId") or ctg_headers.get("ctg-tenantid", ""))
-    userid_value = str(auth.get("userId") or ctg_headers.get("ctg-userid", ""))
-    version_value = str(ctg_headers.get("ctg-version", ""))
-    secret_key_value = str(auth.get("secretKey", ""))
-
-    if not (tenant_id_value and userid_value and version_value and secret_key_value):
-        raise SystemExit("Missing auth/ctg values in config.json")
-
-    base_headers = {
-        "accept": "application/json, text/plain, */*",
-        "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        "content-type": "application/x-www-form-urlencoded",
-        "ctg-appmodel": ctg_headers.get("ctg-appmodel", "2"),
-        "ctg-devicecode": ctg_headers.get("ctg-devicecode", ""),
-        "ctg-devicetype": device_type_value,
-        "ctg-tenantid": tenant_id_value,
-        "ctg-userid": userid_value,
-        "ctg-version": version_value,
-        "origin": "https://pc.ctyun.cn",
-        "referer": "https://pc.ctyun.cn/",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
-    }
-
-    # Optional headers if present
-    for k in ("ctg-nego-ekeyid", "ctg-reqdata-etype"):
-        if k in ctg_headers:
-            base_headers[k] = ctg_headers[k]
-
-    def send_once():
-        request_id_value = str(int(time.time() * 1000))
-        timestamp_value = str(int(time.time() * 1000))
-        signature = build_signature(
-            device_type_value,
-            request_id_value,
-            tenant_id_value,
-            timestamp_value,
-            userid_value,
-            version_value,
-            secret_key_value,
-        )
-        headers = dict(base_headers)
-        headers["ctg-requestid"] = request_id_value
-        headers["ctg-timestamp"] = timestamp_value
-        headers["ctg-signaturestr"] = signature
-
-        resp = requests.post(connect_url, data=device_info, headers=headers, timeout=20)
-        try:
-            payload = resp.json()
-        except Exception:
-            payload = resp.text
-        print("status:", resp.status_code, "response:", payload)
+    validate_config(cfg)
 
     if args.once:
-        send_once()
+        ok, status, payload = send_keepalive_once(cfg)
+        print("status:", status, "response:", payload)
+        if not ok:
+            raise SystemExit(f"Keepalive failed with status {status}")
         return
 
     while True:
-        send_once()
+        ok, status, payload = send_keepalive_once(cfg)
+        print("status:", status, "response:", payload)
         time.sleep(args.interval)
 
 

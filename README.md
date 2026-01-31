@@ -1,55 +1,146 @@
+# tyy-keeperlive
 
+## 环境准备
 
+- Python: 3.12+
+- 依赖安装：
+  - 使用 uv：`uv sync`
+  - 或使用 pip：`pip install -e .`
 
-chromedriver - 谷歌浏览器驱动 需要与chrome版本保持一致
-https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+## 驱动准备（Windows / Linux）
 
+- ChromeDriver 需与 Chrome 版本一致：
+  - https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+- EdgeDriver 需与 Edge 版本一致：
+  - https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/
 
-安装依赖
-uv add selenium
+建议把驱动放在项目根目录下的 `drivers/`：
 
-启动脚本
+```
+./drivers/chromedriver.exe
+./drivers/msedgedriver.exe
+```
 
-python keepliver/ctyun_auto_selenium.py --chromedriver .\keepliver\chromedriver.exe  --auto-connect 
+Linux 下注意赋予执行权限：
 
-统一 CLI（推荐）
+```bash
+chmod +x ./drivers/chromedriver
+chmod +x ./drivers/msedgedriver
+```
 
-# 纯手动 测试可用
-python keepliver/cli.py login --backend selenium --chromedriver .\keepliver\chromedriver.exe --auto-connect
+---
 
-# 读取配置账号后自动识别ocr，自动输入验证码，手动输入手机验证码  测试可用
-python keepliver/cli.py login --backend selenium --chromedriver .\keepliver\chromedriver.exe --login-mode account --secrets .\keepliver\secrets.json --auto-connect
+## Windows 示例
 
-# 读取配置账号后自动识别ocr，自动输入验证码,手动输入手机验证码 无终端模式 测试可用
-python keepliver/cli.py login --backend selenium --chromedriver .\keepliver\chromedriver.exe --login-mode account --secrets .\keepliver\secrets.json --headless --auto-connect
+### 登录抓取配置（selenium）
 
-# 手动输入验证码 + 手机验证码 ：需chrome 测试可用
-python keepliver/cli.py login --backend selenium --chromedriver .\keepliver\chromedriver.exe --login-mode account --secrets .\keepliver\secrets.json --captcha-mode manual --captcha-port 8000
+```powershell
+# 纯手动模式
+python -m keepliver.cli login --backend selenium --chromedriver .\drivers\chromedriver.exe --auto-connect
 
-# 每隔 1800 秒（30 分钟）向天翼云发送一次“连接/保活”请求 
-python keepliver/cli.py keepalive --config keepliver/config.json --interval 1800
+# 账号密码 + OCR + 手动短信验证码
+python -m keepliver.cli login --backend selenium --chromedriver .\drivers\chromedriver.exe --login-mode account --secrets .\keepliver\secrets.json --auto-connect
 
-# 单次执行
-python keepliver/cli.py once --config keepliver/config.json
+# Edge
+python -m keepliver.cli login --backend selenium --browser edge --edgedriver .\drivers\msedgedriver.exe --auto-connect
+```
 
+### 自动保活（推荐）
 
-secrets.json 示例
+```powershell
+# config.json 不存在会自动登录并生成；保活失败会自动重登并重发一次
+python -m keepliver.cli auto --interval 1800
+```
 
-{"account":"你的账号或手机号","password":"你的密码"}
+#### 自动保活参数示例（Windows）
 
-验证码 OCR（可选）
+```powershell
+# 指定驱动与登录模式（账号密码登录）
+python -m keepliver.cli auto --interval 1800 `
+  --chromedriver .\\drivers\\chromedriver.exe `
+  --login-mode account --secrets .\\keepliver\\secrets.json --auto-connect
 
+# 使用 Edge
+python -m keepliver.cli auto --interval 1800 `
+  --browser edge --edgedriver .\\drivers\\msedgedriver.exe --auto-connect
+```
+
+### 单次/循环保活
+
+```powershell
+python -m keepliver.cli once --config keepliver\config.json
+python -m keepliver.cli keepalive --config keepliver\config.json --interval 1800
+```
+
+---
+
+## Linux 示例
+
+### 登录抓取配置（selenium）
+
+```bash
+# 纯手动模式
+python -m keepliver.cli login --backend selenium --chromedriver ./drivers/chromedriver --auto-connect
+
+# 账号密码 + OCR + 手动短信验证码
+python -m keepliver.cli login --backend selenium --chromedriver ./drivers/chromedriver --login-mode account --secrets ./keepliver/secrets.json --auto-connect
+
+# Edge
+python -m keepliver.cli login --backend selenium --browser edge --edgedriver ./drivers/msedgedriver --auto-connect
+```
+
+### 自动保活（推荐）
+
+```bash
+python -m keepliver.cli auto --interval 1800
+```
+
+#### 自动保活参数示例（Linux）
+
+```bash
+# 指定驱动与登录模式（账号密码登录）
+python -m keepliver.cli auto --interval 1800 \\
+  --chromedriver ./drivers/chromedriver \\
+  --login-mode account --secrets ./keepliver/secrets.json --auto-connect
+
+# 使用 Edge
+python -m keepliver.cli auto --interval 1800 \\
+  --browser edge --edgedriver ./drivers/msedgedriver --auto-connect
+```
+
+### 单次/循环保活
+
+```bash
+python -m keepliver.cli once --config keepliver/config.json
+python -m keepliver.cli keepalive --config keepliver/config.json --interval 1800
+```
+
+### Linux 备注（Chrome 兼容性）
+
+- 部分 Linux 环境下 Chrome 可能存在兼容问题。
+- 可优先用 Edge（测试可用）。
+- 或自行测试 Chromium + 匹配版本的 chromedriver。
+
+---
+
+## secrets.json 示例
+
+```json
+{
+  "account": "你的账号或手机号",
+  "password": "你的密码",
+  "telegram_token": "可选的 Telegram Bot Token",
+  "telegram_chat_id": "可选的 Telegram Chat ID"
+}
+```
+
+## 验证码 OCR（可选）
+
+```bash
 pip install ddddocr
+```
 
-手机号验证弹窗（图形验证码 + 短信）
+## 手机号验证弹窗（图形验证码 + 短信）
 
-若出现手机号验证弹窗，会自动拉起输入页（同 --captcha-port）
-可通过 --phone-verify-template 指定模板，默认使用 keepliver/login-phone-verify.html
-
-
-
-telegram bot
-
-curl -s "https://api.telegram.org/bot<TOKEN>/getUpdates" 
-
-send a message from get msg.id
+若出现手机号验证弹窗，会自动拉起输入页（同 `--captcha-port`）
+可通过 `--phone-verify-template` 指定模板，默认使用 `keepliver/login-phone-verify.html`

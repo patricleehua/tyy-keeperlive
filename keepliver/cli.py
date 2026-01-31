@@ -109,6 +109,86 @@ def build_parser() -> argparse.ArgumentParser:
     once = sub.add_parser("once", help="Send one keepalive request and exit.")
     once.add_argument("--config", default=None, help="Path to config.json.")
 
+    auto = sub.add_parser(
+        "auto", help="Auto keepalive with login refresh when config is missing/expired."
+    )
+    auto.add_argument("--config", default=None, help="Path to config.json.")
+    auto.add_argument("--interval", type=int, default=None, help="Seconds between requests.")
+    auto.add_argument(
+        "--backend",
+        choices=["selenium", "playwright"],
+        default=None,
+        help="Browser automation backend.",
+    )
+    auto.add_argument("--profile-dir", default=None, help="Persistent profile dir.")
+    auto.add_argument("--timeout", type=int, default=None, help="Wait timeout seconds.")
+    auto.add_argument("--chromedriver", default=None, help="Path to chromedriver.")
+    auto.add_argument("--chrome-binary", default=None, help="Path to Chrome binary.")
+    auto.add_argument("--edgedriver", default=None, help="Path to msedgedriver.")
+    auto.add_argument("--edge-binary", default=None, help="Path to Edge binary.")
+    auto.add_argument(
+        "--browser",
+        choices=["chrome", "edge"],
+        default=None,
+        help="Browser type for selenium (default: chrome).",
+    )
+    auto.add_argument("--auto-connect", action="store_true", help="Auto-click Connect.")
+    auto.add_argument(
+        "--login-mode",
+        choices=["qr", "account"],
+        default=None,
+        help="Login mode for selenium (qr or account).",
+    )
+    auto.add_argument("--account", default=None, help="Account/phone/email for login.")
+    auto.add_argument("--password", default=None, help="Password for login.")
+    auto.add_argument("--secrets", default=None, help="Path to secrets.json.")
+    auto.add_argument(
+        "--headless",
+        action="store_true",
+        help="Headless mode (selenium: after first login; playwright: always).",
+    )
+    auto.add_argument(
+        "--force-headless",
+        action="store_true",
+        help="Force headless for selenium even if profile is new.",
+    )
+    auto.add_argument(
+        "--captcha-mode",
+        choices=["auto", "manual", "off"],
+        default=None,
+        help="Captcha mode for selenium (auto/manual/off).",
+    )
+    auto.add_argument(
+        "--captcha-timeout",
+        type=int,
+        default=None,
+        help="Captcha wait seconds.",
+    )
+    auto.add_argument(
+        "--captcha-port",
+        type=int,
+        default=None,
+        help="Captcha web port (0 = console).",
+    )
+    auto.add_argument(
+        "--phone-verify-template",
+        default=None,
+        help="HTML template for phone verify input page.",
+    )
+    auto.add_argument("--telegram-token", default=None, help="Telegram bot token.")
+    auto.add_argument("--telegram-chat-id", default=None, help="Telegram chat id.")
+    auto.add_argument(
+        "--telegram-timeout",
+        type=int,
+        default=None,
+        help="Seconds to wait for Telegram reply.",
+    )
+    auto.add_argument(
+        "--telegram-test",
+        action="store_true",
+        help="Send a startup test message to verify Telegram config.",
+    )
+
     return parser
 
 
@@ -175,6 +255,42 @@ def main() -> None:
             _add_if(argv, "--interval", args.interval)
         if args.cmd == "once" or args.once:
             argv.append("--once")
+        _run_module_main(mod, argv)
+        return
+
+    if args.cmd == "auto":
+        from keepliver import auto as mod
+
+        argv = ["auto.py"]
+        _add_if(argv, "--config", args.config)
+        _add_if(argv, "--interval", args.interval)
+        _add_if(argv, "--backend", args.backend)
+        _add_if(argv, "--profile-dir", args.profile_dir)
+        _add_if(argv, "--timeout", args.timeout)
+        _add_if(argv, "--chromedriver", args.chromedriver)
+        _add_if(argv, "--chrome-binary", args.chrome_binary)
+        _add_if(argv, "--edgedriver", args.edgedriver)
+        _add_if(argv, "--edge-binary", args.edge_binary)
+        _add_if(argv, "--browser", args.browser)
+        _add_if(argv, "--login-mode", args.login_mode)
+        _add_if(argv, "--account", args.account)
+        _add_if(argv, "--password", args.password)
+        _add_if(argv, "--secrets", args.secrets)
+        _add_if(argv, "--captcha-mode", args.captcha_mode)
+        _add_if(argv, "--captcha-timeout", args.captcha_timeout)
+        _add_if(argv, "--captcha-port", args.captcha_port)
+        _add_if(argv, "--phone-verify-template", args.phone_verify_template)
+        _add_if(argv, "--telegram-token", args.telegram_token)
+        _add_if(argv, "--telegram-chat-id", args.telegram_chat_id)
+        _add_if(argv, "--telegram-timeout", args.telegram_timeout)
+        if args.telegram_test:
+            argv.append("--telegram-test")
+        if args.headless:
+            argv.append("--headless")
+        if args.force_headless:
+            argv.append("--force-headless")
+        if args.auto_connect:
+            argv.append("--auto-connect")
         _run_module_main(mod, argv)
         return
 
