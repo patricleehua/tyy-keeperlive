@@ -176,6 +176,8 @@ generate_service_file() {
 Description=Keepliver Auto Service - CTYUN Keepalive
 After=network-online.target
 Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
 
 [Service]
 Type=simple
@@ -186,7 +188,9 @@ Environment="DISPLAY=:0"
 Environment="XAUTHORITY=/run/user/UID_PLACEHOLDER/.mutter-Xwaylandauth.Z7YOM3"
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/UID_PLACEHOLDER/bus"
 
-ExecStart=WORK_DIR_PLACEHOLDER/.venv/bin/ctyun-keeplive auto \
+# 使用 systemd-inhibit 防止系统休眠
+ExecStart=/usr/bin/systemd-inhibit --what=sleep --who=keepliver --why="Prevent sleep for CTYUN keepalive" \
+    WORK_DIR_PLACEHOLDER/.venv/bin/ctyun-keeplive auto \
     --interval INTERVAL_PLACEHOLDER \
     --captcha-base-url CAPTCHA_BASE_URL_PLACEHOLDER \
     --captcha-port CAPTCHA_PORT_PLACEHOLDER \
@@ -200,8 +204,6 @@ ExecStart=WORK_DIR_PLACEHOLDER/.venv/bin/ctyun-keeplive auto \
 
 Restart=always
 RestartSec=60
-StartLimitIntervalSec=300
-StartLimitBurst=5
 
 TimeoutStopSec=30
 KillSignal=SIGTERM
