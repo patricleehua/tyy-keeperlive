@@ -65,13 +65,14 @@ python -m keepliver.cli auto --interval 1800
 --edgedriver            EdgeDriver 路径（默认自动探测）
 --edge-binary           Edge 浏览器二进制路径（可选）
 --browser               selenium 浏览器：chrome / edge（默认 chrome）
---auto-connect          自动点击“连接”
+--auto-connect          自动点击”连接”
 --login-mode            登录模式：qr / account（默认 qr）
 --account               账号/手机号/邮箱
 --password              密码
 --secrets               secrets.json 路径（可写账号/密码/Telegram）
 --headless              无界面模式（首次登录不建议）
 --force-headless        强制 headless（即使首次登录）
+--keep-browser          登录成功后保持浏览器打开秒数（默认 10，0=不关闭）
 --captcha-mode          验证码模式：auto / manual / off（默认 auto）
 --captcha-timeout       验证码等待秒数（默认 120）
 --captcha-port          验证码输入页端口（默认 8000，0=控制台输入）
@@ -193,13 +194,14 @@ sudo systemctl status ctyun-keepalive.service
 --edgedriver            EdgeDriver 路径（默认自动探测）
 --edge-binary           Edge 浏览器二进制路径（可选）
 --browser               selenium 浏览器：chrome / edge（默认 chrome）
---auto-connect          自动点击“连接”
+--auto-connect          自动点击”连接”
 --login-mode            登录模式：qr / account（默认 qr）
 --account               账号/手机号/邮箱
 --password              密码
 --secrets               secrets.json 路径（可写账号/密码/Telegram）
 --headless              无界面模式（首次登录不建议）
 --force-headless        强制 headless（即使首次登录）
+--keep-browser          登录成功后保持浏览器打开秒数（默认 10，0=不关闭）
 --captcha-mode          验证码模式：auto / manual / off（默认 auto）
 --captcha-timeout       验证码等待秒数（默认 120）
 --captcha-port          验证码输入页端口（默认 8000，0=控制台输入）

@@ -6,18 +6,19 @@ PROCESS_NAME="python -m keepliver.cli auto"
 WORK_DIR="/data/tyy-keeperlive"
 VENV_PATH="$WORK_DIR/.venv/bin/activate"
 LOG_FILE="$WORK_DIR/keepliver.out"
+KEEP_BROWSER=10
 
 case "$1" in
     start|启用)
         echo "启动 keepliver..."
         cd "$WORK_DIR" || { echo "无法进入工作目录 $WORK_DIR"; exit 1; }
-        
+
         # 检查是否已经在运行
         if pgrep -f "$PROCESS_NAME" > /dev/null; then
             echo "keepliver 已经在运行中"
             exit 0
         fi
-        
+
         # 激活虚拟环境并启动
         source "$VENV_PATH"
         nohup python -m keepliver.cli auto \
@@ -27,8 +28,9 @@ case "$1" in
             --browser edge \
             --edgedriver ./drivers/msedgedriver \
             --auto-connect \
+            --keep-browser $KEEP_BROWSER \
             --headless > "$LOG_FILE" 2>&1 &
-        
+
         echo "keepliver 已启动，进程ID: $!"
         ;;
     

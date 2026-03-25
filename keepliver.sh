@@ -69,6 +69,7 @@ load_config() {
     HEADLESS="true"
     SECRETS="$SECRETS_FILE"
     LOGIN_MODE="account"
+    KEEP_BROWSER=10
 
     # 加载用户配置
     if [ -f "$CONFIG_FILE" ]; then
@@ -92,6 +93,7 @@ AUTO_CONNECT=$AUTO_CONNECT
 HEADLESS=$HEADLESS
 SECRETS="$SECRETS"
 LOGIN_MODE="$LOGIN_MODE"
+KEEP_BROWSER=$KEEP_BROWSER
 EOF
     echo -e "${GREEN}✅ 配置已保存到: $CONFIG_FILE${NC}"
 }
@@ -130,6 +132,9 @@ edit_config() {
     read -p "登录模式 (qr/account) [$LOGIN_MODE]: " val
     [ -n "$val" ] && LOGIN_MODE=$val
 
+    read -p "登录成功后保持浏览器打开秒数(0=不关闭) [$KEEP_BROWSER]: " val
+    [ -n "$val" ] && KEEP_BROWSER=$val
+
     save_config
 
     echo ""
@@ -151,6 +156,7 @@ show_config() {
     echo "HEADLESS:         $HEADLESS"
     echo "SECRETS:          $SECRETS"
     echo "LOGIN_MODE:       $LOGIN_MODE"
+    echo "KEEP_BROWSER:     $KEEP_BROWSER"
 }
 
 # ==================== 服务文件生成 ====================
@@ -189,6 +195,7 @@ ExecStart=WORK_DIR_PLACEHOLDER/.venv/bin/ctyun-keeplive auto \
     --chromedriver CHROMEDRIVER_PLACEHOLDER \
     --secrets SECRETS_PLACEHOLDER \
     --login-mode LOGIN_MODE_PLACEHOLDER \
+    --keep-browser KEEP_BROWSER_PLACEHOLDER \
     --auto-connect HEADLESS_PLACEHOLDER
 
 Restart=always
@@ -217,6 +224,7 @@ EOF
     sed -i "s|CHROMEDRIVER_PLACEHOLDER|$CHROMEDRIVER|g" "$SERVICE_FILE"
     sed -i "s|SECRETS_PLACEHOLDER|$SECRETS|g" "$SERVICE_FILE"
     sed -i "s|LOGIN_MODE_PLACEHOLDER|$LOGIN_MODE|g" "$SERVICE_FILE"
+    sed -i "s|KEEP_BROWSER_PLACEHOLDER|$KEEP_BROWSER|g" "$SERVICE_FILE"
     sed -i "s|HEADLESS_PLACEHOLDER|$HEADLESS_ARG|g" "$SERVICE_FILE"
 }
 

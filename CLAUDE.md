@@ -64,6 +64,9 @@ python keepliver/ctyun_auto_selenium.py --telegram-token "YOUR_BOT_TOKEN" --tele
 
 # Console input mode (no web server)
 python keepliver/ctyun_auto_selenium.py --captcha-port 0
+
+# Keep browser open longer after login success (for debugging)
+python keepliver/ctyun_auto_selenium.py --keep-browser 30
 ```
 
 ### secrets.json format
