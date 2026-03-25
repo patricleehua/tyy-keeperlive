@@ -9,6 +9,7 @@ SERVICE_NAME="keepliver"
 SERVICE_FILE="$HOME/.config/systemd/user/${SERVICE_NAME}.service"
 CONFIG_FILE="$HOME/.config/keepliver.conf"
 WORK_DIR="/data/tyy-keeperlive"
+SECRETS_FILE="$WORK_DIR/keepliver/secrets.json"
 
 # 颜色输出
 RED='\033[0;31m'
@@ -66,6 +67,7 @@ load_config() {
     CHROMEDRIVER="./drivers/chromedriver"
     AUTO_CONNECT="true"
     HEADLESS="true"
+    SECRETS="$SECRETS_FILE"
 
     # 加载用户配置
     if [ -f "$CONFIG_FILE" ]; then
@@ -87,6 +89,7 @@ EDGEDRIVER="$EDGEDRIVER"
 CHROMEDRIVER="$CHROMEDRIVER"
 AUTO_CONNECT=$AUTO_CONNECT
 HEADLESS=$HEADLESS
+SECRETS="$SECRETS"
 EOF
     echo -e "${GREEN}✅ 配置已保存到: $CONFIG_FILE${NC}"
 }
@@ -119,6 +122,9 @@ edit_config() {
     read -p "无头模式 (true/false) [$HEADLESS]: " val
     [ -n "$val" ] && HEADLESS=$val
 
+    read -p "账户密码文件路径 [$SECRETS]: " val
+    [ -n "$val" ] && SECRETS=$val
+
     save_config
 
     echo ""
@@ -138,6 +144,7 @@ show_config() {
     echo "CHROMEDRIVER:     $CHROMEDRIVER"
     echo "AUTO_CONNECT:     $AUTO_CONNECT"
     echo "HEADLESS:         $HEADLESS"
+    echo "SECRETS:          $SECRETS"
 }
 
 # ==================== 服务文件生成 ====================
@@ -169,6 +176,7 @@ ExecStart=$WORK_DIR/.venv/bin/ctyun-keeplive auto \\
     --browser $BROWSER \\
     --edgedriver $EDGEDRIVER \\
     --chromedriver $CHROMEDRIVER \\
+    --secrets $SECRETS \\
     --auto-connect \\
     $HEADLESS_FLAG
 
