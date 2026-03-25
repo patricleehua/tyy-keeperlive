@@ -158,6 +158,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Force headless for selenium even if profile is new.",
     )
     auto.add_argument(
+        "--keep-browser",
+        type=int,
+        default=None,
+        help="Seconds to keep browser open after success (0 = don't close).",
+    )
+    auto.add_argument(
         "--captcha-mode",
         choices=["auto", "manual", "off"],
         default=None,
@@ -303,6 +309,7 @@ def main() -> None:
             argv.append("--force-headless")
         if args.auto_connect:
             argv.append("--auto-connect")
+        _add_if(argv, "--keep-browser", args.keep_browser)
         _run_module_main(mod, argv)
         return
 

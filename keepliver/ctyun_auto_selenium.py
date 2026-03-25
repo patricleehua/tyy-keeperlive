@@ -341,6 +341,65 @@ def _start_phone_verify_server(
     return server
 
 
+def _kill_existing_browser_processes(profile_dir: str):
+    """Kill existing browser processes using the same profile directory (pure Python, no psutil)."""
+    import subprocess
+    import glob
+
+    try:
+        # Find processes by looking at /proc
+        for pid_str in glob.glob('/proc/[0-9]*'):
+            try:
+                pid = int(os.path.basename(pid_str))
+                # Read cmdline
+                cmdline_path = os.path.join(pid_str, 'cmdline')
+                with open(cmdline_path, 'rb') as f:
+                    cmdline = f.read().decode('utf-8', errors='ignore').replace('\x00', ' ')
+
+                # Check if this process uses our profile directory
+                if profile_dir in cmdline:
+                    # Check if it's a browser process
+                    cmd_lower = cmdline.lower()
+                    if 'edge' in cmd_lower or 'chrome' in cmd_lower or 'msedge' in cmd_lower:
+                        print(f"Killing existing browser process {pid} using profile")
+                        try:
+                            os.kill(pid, 15)  # SIGTERM
+                            time.sleep(0.3)
+                            try:
+                                os.kill(pid, 0)  # Check if still exists
+                                os.kill(pid, 9)  # SIGKILL if still running
+                            except ProcessLookupError:
+                                pass
+                        except (ProcessLookupError, PermissionError):
+                            pass
+                        continue
+
+                # Check for orphaned driver processes
+                if 'edgedriver' in cmdline.lower() or 'chromedriver' in cmdline.lower():
+                    # Check if parent process (the Python script) is still running
+                    stat_path = os.path.join(pid_str, 'stat')
+                    try:
+                        with open(stat_path, 'r') as f:
+                            stat = f.read()
+                        # Parse ppid from stat
+                        ppid = int(stat.split(')')[1].split()[1])
+                        # If parent is init (1) or our script is not the parent, kill it
+                        if ppid == 1:
+                            print(f"Killing orphaned driver process {pid}")
+                            try:
+                                os.kill(pid, 15)
+                                time.sleep(0.2)
+                                os.kill(pid, 9)
+                            except (ProcessLookupError, PermissionError):
+                                pass
+                    except Exception:
+                        pass
+            except (FileNotFoundError, PermissionError, ValueError):
+                continue
+    except Exception as e:
+        print(f"Warning: error cleaning processes: {e}")
+
+
 def _is_profile_initialized(profile_dir: str) -> bool:
     if not profile_dir:
         return False
@@ -958,6 +1017,12 @@ def main():
         help="Force headless even if profile is not initialized.",
     )
     parser.add_argument(
+        "--keep-browser",
+        type=int,
+        default=10,
+        help="Seconds to keep browser open after success (0 = don't close).",
+    )
+    parser.add_argument(
         "--out",
         default=os.path.join(os.path.dirname(__file__), "config.json"),
         help="Output config path.",
@@ -997,8 +1062,8 @@ def main():
     options.add_argument("--remote-debugging-port=0")
     if os.name != "nt":
         options.add_argument("--disable-dev-shm-usage")
-        if hasattr(os, "geteuid") and os.geteuid() == 0:
-            options.add_argument("--no-sandbox")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-setuid-sandbox")
     if args.headless:
         if _is_profile_initialized(args.profile_dir) or args.force_headless:
             options.add_argument("--headless=new")
@@ -1007,6 +1072,11 @@ def main():
             print("Profile not initialized; ignoring --headless for first login.")
     options.set_capability("goog:loggingPrefs", caps.get("goog:loggingPrefs", {}))
     options.set_capability("ms:loggingPrefs", caps.get("ms:loggingPrefs", {}))
+
+    # Clean up any existing browser processes using our profile
+    _kill_existing_browser_processes(args.profile_dir)
+    time.sleep(0.5)  # Give processes time to exit
+
     if args.browser == "edge":
         if args.edge_binary:
             options.binary_location = args.edge_binary
@@ -1195,10 +1265,19 @@ def main():
         with open(args.out, "w", encoding="utf-8") as f:
             json.dump(output, f, ensure_ascii=True, indent=2)
         print(f"Saved: {args.out}")
-        print("Waiting 10 seconds before closing browser...")
-        time.sleep(10)
+        if args.keep_browser > 0:
+            print(f"Waiting {args.keep_browser} seconds before closing browser...")
+            time.sleep(args.keep_browser)
+        else:
+            print("Keeping browser open (--keep-browser=0). Press Ctrl+C to exit.")
+            while True:
+                time.sleep(1)
     finally:
-        driver.quit()
+        if driver is not None:
+            try:
+                driver.quit()
+            except Exception as e:
+                print(f"Error quitting driver: {e}")
 
 
 if __name__ == "__main__":

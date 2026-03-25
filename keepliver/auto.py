@@ -56,6 +56,7 @@ def _login_selenium(args) -> None:
         argv.append("--force-headless")
     if args.auto_connect:
         argv.append("--auto-connect")
+    _add_if(argv, "--keep-browser", args.keep_browser)
 
     _run_module_main(mod, argv)
 
@@ -151,6 +152,12 @@ def main() -> None:
     )
     parser.add_argument("--force-headless", action="store_true")
     parser.add_argument(
+        "--keep-browser",
+        type=int,
+        default=10,
+        help="Seconds to keep browser open after success (0 = don't close).",
+    )
+    parser.add_argument(
         "--captcha-mode",
         choices=["auto", "manual", "off"],
         default="auto",
@@ -203,6 +210,8 @@ def main() -> None:
         args.edgedriver = next((p for p in candidates if os.path.exists(p)), "msedgedriver")
 
     # Auto keepalive via desktop list -> connect flow (no direct HTTP keepalive).
+    consecutive_errors = 0
+    max_consecutive_errors = 5
     while True:
         if args.backend != "selenium":
             print("auto keepalive requires selenium; overriding backend to selenium.")
@@ -210,7 +219,21 @@ def main() -> None:
         args.auto_connect = True
         start_ts = datetime.now(timezone.utc).astimezone().isoformat(sep=" ", timespec="seconds")
         print(f"[auto] start: {start_ts}", flush=True)
-        _login_selenium(args)
+        try:
+            _login_selenium(args)
+            consecutive_errors = 0  # 成功后重置错误计数
+        except Exception as e:
+            consecutive_errors += 1
+            print(f"[auto] error: {e}", flush=True)
+            print(f"[auto] consecutive errors: {consecutive_errors}/{max_consecutive_errors}", flush=True)
+            if consecutive_errors >= max_consecutive_errors:
+                print("[auto] too many consecutive errors, exiting.", flush=True)
+                raise SystemExit(1)
+            # 出错后等待一段时间再重试，避免频繁重试
+            retry_delay = min(60 * consecutive_errors, 300)
+            print(f"[auto] retrying in {retry_delay} seconds...", flush=True)
+            time.sleep(retry_delay)
+            continue
         end_ts = datetime.now(timezone.utc).astimezone().isoformat(sep=" ", timespec="seconds")
         print(f"[auto] end: {end_ts}", flush=True)
         time.sleep(args.interval)
