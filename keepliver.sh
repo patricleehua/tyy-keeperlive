@@ -157,12 +157,15 @@ show_config() {
 generate_service_file() {
     load_config
 
-    local HEADLESS_FLAG=""
-    [ "$HEADLESS" = "true" ] && HEADLESS_FLAG="--headless"
+    # 先定义所有变量
+    local USER_ID HEADLESS_ARG
+    USER_ID=$(id - u)
+    HEADLESS_ARG=""
+    [ "$HEADLESS" = "true" ] && HEADLESS_ARG="    --headless"
 
     mkdir -p "$HOME/.config/systemd/user"
 
-    cat > "$SERVICE_FILE" << EOF
+    cat > "$SERVICE_FILE" << 'EOF'
 [Unit]
 Description=Keepliver Auto Service - CTYUN Keepalive
 After=network-online.target
@@ -170,22 +173,23 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=$WORK_DIR
-Environment="PATH=$WORK_DIR/.venv/bin:/usr/bin:/bin"
+WorkingDirectory=WORK_DIR_PLACEHOLDER
+Environment="PATH=WORK_DIR_PLACEHOLDER/.venv/bin:/usr/bin:/bin"
 Environment="PYTHONUNBUFFERED=1"
-Environment="DISPLAY=:1"
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=/run/user/UID_PLACEHOLDER/.mutter-Xwaylandauth.Z7YOM3"
+Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/UID_PLACEHOLDER/bus"
 
-ExecStart=$WORK_DIR/.venv/bin/ctyun-keeplive auto \\
-    --interval $INTERVAL \\
-    --captcha-base-url $CAPTCHA_BASE_URL \\
-    --captcha-port $CAPTCHA_PORT \\
-    --browser $BROWSER \\
-    --edgedriver $EDGEDRIVER \\
-    --chromedriver $CHROMEDRIVER \\
-    --secrets $SECRETS \\
-    --login-mode $LOGIN_MODE \\
-    --auto-connect \\
-    $HEADLESS_FLAG
+ExecStart=WORK_DIR_PLACEHOLDER/.venv/bin/ctyun-keeplive auto \
+    --interval INTERVAL_PLACEHOLDER \
+    --captcha-base-url CAPTCHA_BASE_URL_PLACEHOLDER \
+    --captcha-port CAPTCHA_PORT_PLACEHOLDER \
+    --browser BROWSER_PLACEHOLDER \
+    --edgedriver EDGEDRIVER_PLACEHOLDER \
+    --chromedriver CHROMEDRIVER_PLACEHOLDER \
+    --secrets SECRETS_PLACEHOLDER \
+    --login-mode LOGIN_MODE_PLACEHOLDER \
+    --auto-connect HEADLESS_PLACEHOLDER
 
 Restart=always
 RestartSec=60
@@ -201,6 +205,19 @@ StandardError=journal
 [Install]
 WantedBy=default.target
 EOF
+
+    # 替换占位符为实际值
+    sed -i "s|WORK_DIR_PLACEHOLDER|$WORK_DIR|g" "$SERVICE_FILE"
+    sed -i "s|UID_PLACEHOLDER|$USER_ID|g" "$SERVICE_FILE"
+    sed -i "s|INTERVAL_PLACEHOLDER|$INTERVAL|g" "$SERVICE_FILE"
+    sed -i "s|CAPTCHA_BASE_URL_PLACEHOLDER|$CAPTCHA_BASE_URL|g" "$SERVICE_FILE"
+    sed -i "s|CAPTCHA_PORT_PLACEHOLDER|$CAPTCHA_PORT|g" "$SERVICE_FILE"
+    sed -i "s|BROWSER_PLACEHOLDER|$BROWSER|g" "$SERVICE_FILE"
+    sed -i "s|EDGEDRIVER_PLACEHOLDER|$EDGEDRIVER|g" "$SERVICE_FILE"
+    sed -i "s|CHROMEDRIVER_PLACEHOLDER|$CHROMEDRIVER|g" "$SERVICE_FILE"
+    sed -i "s|SECRETS_PLACEHOLDER|$SECRETS|g" "$SERVICE_FILE"
+    sed -i "s|LOGIN_MODE_PLACEHOLDER|$LOGIN_MODE|g" "$SERVICE_FILE"
+    sed -i "s|HEADLESS_PLACEHOLDER|$HEADLESS_ARG|g" "$SERVICE_FILE"
 }
 
 # ==================== 服务管理 ====================
