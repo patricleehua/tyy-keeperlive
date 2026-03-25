@@ -68,6 +68,7 @@ load_config() {
     AUTO_CONNECT="true"
     HEADLESS="true"
     SECRETS="$SECRETS_FILE"
+    LOGIN_MODE="account"
 
     # 加载用户配置
     if [ -f "$CONFIG_FILE" ]; then
@@ -90,6 +91,7 @@ CHROMEDRIVER="$CHROMEDRIVER"
 AUTO_CONNECT=$AUTO_CONNECT
 HEADLESS=$HEADLESS
 SECRETS="$SECRETS"
+LOGIN_MODE="$LOGIN_MODE"
 EOF
     echo -e "${GREEN}✅ 配置已保存到: $CONFIG_FILE${NC}"
 }
@@ -125,6 +127,9 @@ edit_config() {
     read -p "账户密码文件路径 [$SECRETS]: " val
     [ -n "$val" ] && SECRETS=$val
 
+    read -p "登录模式 (qr/account) [$LOGIN_MODE]: " val
+    [ -n "$val" ] && LOGIN_MODE=$val
+
     save_config
 
     echo ""
@@ -145,6 +150,7 @@ show_config() {
     echo "AUTO_CONNECT:     $AUTO_CONNECT"
     echo "HEADLESS:         $HEADLESS"
     echo "SECRETS:          $SECRETS"
+    echo "LOGIN_MODE:       $LOGIN_MODE"
 }
 
 # ==================== 服务文件生成 ====================
@@ -177,6 +183,7 @@ ExecStart=$WORK_DIR/.venv/bin/ctyun-keeplive auto \\
     --edgedriver $EDGEDRIVER \\
     --chromedriver $CHROMEDRIVER \\
     --secrets $SECRETS \\
+    --login-mode $LOGIN_MODE \\
     --auto-connect \\
     $HEADLESS_FLAG
 
